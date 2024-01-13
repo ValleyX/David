@@ -17,9 +17,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxPIDController;
+//import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+//import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+//import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.AbsoluteEncoder;
 
 import frc.robot.Constants;
