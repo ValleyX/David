@@ -49,7 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_ShooterIntakeMotor = new TalonSRX(CanIDs.kCAN_ShooterIntakeMotor);
 
-    m_ShooterBeans = new DigitalInput(DigitalInputIDs.kDIG_ShootBeanBreak);
+    m_ShooterBeans = new DigitalInput(DigitalInputIDs.kDIG_ShootBeanBreak); //shooter bean break
     m_PivotDown = new DigitalInput(DigitalInputIDs.kDIG_PivotDownLimitSwitch);
     m_ElevatorUp = new DigitalInput(DigitalInputIDs.kDIG_ElevatorUpLimitSwitch);
     m_ElevatorDown = new DigitalInput(DigitalInputIDs.kDIG_ElevatorDownLimitSwitch);
@@ -107,12 +107,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void MovePivotTo(double positionInches){ // Move Pivot motor to specific location by PID loop
    // m_PivotPIDController
-   
-   
+   m_PivotPIDController.setReference(positionInches,ControlType.kPosition); //TODO check if works
+
   }
 
   public void MoveElevator(double speed){//moves elevator with a given speed
     m_ElevatorMotor.set(speed);
+  }
+
+  public void MoveElevatorTo(double heightInches){ //function to move elevator to specific height
+       m_ElevatorPIDController.setReference(heightInches,ControlType.kPosition);
   }
 
   public void MovePivot(double speed){//moves pivot with a given speed
@@ -129,7 +133,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double GetElevatorPosition(){
-    return 0; //TODO; fill this in with a value
+    return m_ElevatorEncoder.getPosition(); //TODO; fill this in with a value
   }
 
   public double GetRPM(){
