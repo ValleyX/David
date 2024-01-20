@@ -30,6 +30,8 @@ public final class Constants {
 
   public static final class CanIDs {
 
+    //Have to to set CAN IDs
+
     public static final int kCAN_Roborio = 0;
 
     public static final int kCAN_TurnLeftFront = 1;
@@ -55,10 +57,14 @@ public final class Constants {
     public static final int kCAN_ShooterIntakeMotor = 16;
     public static final int kCAN_ElevatorMotor = 17;
     public static final int kCAN_FloorIntakeMotor = 18;
+
     public static final int kCAN_ClimberMotorLeft = 19;
     public static final int kCAN_ClimberMotorRight = 20;
-    public static final int kCAN_PivotCANCoder = 21;
-    public static final int kCAN_PivotMotor = 22;
+    public static final int kCAN_ClimberPivotMotor = 21;
+    public static final int kCAN_ClimberAngle = 22;
+
+    public static final int kCAN_PivotCANCoder = 23;
+    public static final int kCAN_PivotMotor = 24;
 
 
   } 
@@ -72,8 +78,10 @@ public final class Constants {
     public static final int kDIG_ElevatorUpLimitSwitch = 2;
     public static final int kDIG_ElevatorDownLimitSwitch = 3;
 
-    public static final int kDIG_ClimberUpLimitSwitch = 4;
+  
     public static final int kDIG_ClimberDownLimitSwitch = 5;
+
+
 
     public static final int kDIG_PivotDownLimitSwitch = 6; //it will not properly intake before touched
     

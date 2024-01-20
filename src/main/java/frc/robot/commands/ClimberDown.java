@@ -7,10 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
 
-public class ClimberCommand extends Command {
+public class ClimberDown extends Command {
   private ClimberSubsystem m_ClimberSubsystem;
 
-  public ClimberCommand(ClimberSubsystem climbsub) {
+  public ClimberDown(ClimberSubsystem climbsub) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_ClimberSubsystem = climbsub;
     addRequirements(m_ClimberSubsystem);
@@ -21,6 +21,10 @@ public class ClimberCommand extends Command {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
+
+  //activate the climber
+
+  
   @Override
   public void execute() {}
 
@@ -29,6 +33,8 @@ public class ClimberCommand extends Command {
   public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
+
+  //check if encoders and angle are where they should be
   @Override
   public boolean isFinished() {
     return false;
