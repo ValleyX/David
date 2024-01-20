@@ -27,7 +27,12 @@ public class FloorIntakeCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if(m_ShooterSubsystem.IsShooterAligned()){
+      m_IntakeSubsystem.IntakeIn();
+      m_ShooterSubsystem.IntakeIn();
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -40,6 +45,11 @@ public class FloorIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(m_ShooterSubsystem.IsNoteRecieved()){
+      m_IntakeSubsystem.IntakeStop();
+      m_ShooterSubsystem.IntakeStop();
+      return true;
+    }
     return false;
   }
 }

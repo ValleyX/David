@@ -8,25 +8,35 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShooterSpeakerCommand extends Command {//moves shooter to subwoofer position for shooting MIght not need if we shoot rom starting position
-  
-  private ShooterSubsystem m_ShooterSubsystem;
+public class ShooterReset extends Command {
+  /** Creates a new ShooterReset. */
+    private ShooterSubsystem m_ShooterSubsystem;
   private Joystick m_joystickManipulator;
 
-  public ShooterSpeakerCommand(ShooterSubsystem shootersubs, Joystick manipulate) {
+  public ShooterReset(ShooterSubsystem shooterSubs, Joystick manipulate) {
     // Use addRequirements() here to declare subsystem dependencies.
-   m_ShooterSubsystem = shootersubs;
-   m_joystickManipulator = manipulate;
+    m_ShooterSubsystem = shooterSubs;
+    m_joystickManipulator = manipulate;
     addRequirements(m_ShooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_ShooterSubsystem.MoveElevator(-.5);
+    m_ShooterSubsystem.MovePivot(-.5);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(m_ShooterSubsystem.IsElevatorDown()){
+      m_ShooterSubsystem.MoveElevator(0);
+    }
+    if(m_ShooterSubsystem.IsShooterAligned()){
+      m_ShooterSubsystem.MovePivot(0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -35,6 +45,9 @@ public class ShooterSpeakerCommand extends Command {//moves shooter to subwoofer
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(m_ShooterSubsystem.IsElevatorDown() && m_ShooterSubsystem.IsShooterAligned()){
+      return true;
+    }
     return false;
   }
 }

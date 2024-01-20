@@ -22,7 +22,9 @@ public class ShooterPodiumCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_ShooterSubsystem.MovePivot(.5);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -35,6 +37,10 @@ public class ShooterPodiumCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(m_ShooterSubsystem.GetPivotPosition() == 0){//TODO; replace 0 with desired angle
+      m_ShooterSubsystem.MovePivot(0);
+      return true;
+    }
     return false;
   }
 }

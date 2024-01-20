@@ -80,6 +80,16 @@ public final class Constants {
   
   }
 
+  public static final class ShooterPivotPID{
+    public static final double kP = 0.1;
+    public static final double kI = 0.0001;
+    public static final double kD = 1;
+    public static final double kIz = 0;
+    public static final double kFF = 0;
+    public static final double kMaxOutput = 1;
+    public static final double kMinOutput = -1;
+  }
+
 
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
@@ -195,7 +205,24 @@ public final class Constants {
     public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 
-  public static final class ClimberConstants {
+  public static final class ElevatorConstants{ //The NEO motor type
+    public final static double countsPerMotorREV = 42; //found via RevRobotics site revrobotics.com/rev-21-1650/
+    public final static double gearReduction = 5.48251; //mat calculation 
+    public final static double gearDiameter = 1.592; //inches 
+    public final static double countsPerInch = (countsPerMotorREV*gearReduction)/(gearDiameter*Math.PI);
+
+    public static final double kP = 0.1;
+    public static final double kI = 0.0001;
+    public static final double kD = 1;
+    public static final double kIz = 0;
+    public static final double kFF = 0;
+    public static final double kMaxOutput = 1;
+    public static final double kMinOutput = -1;
+
+
+  }
+
+  public static final class ClimberConstants { //Neo motor type
 
     public final static double kClimberUpSpeed = 0.3;
     public final static double kClimberDownSpeed = -0.3;
