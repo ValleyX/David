@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
-
+import frc.robot.Constants;
 
 public class TakeShot extends Command {
   /** Creates a new TakeShot. */
@@ -27,7 +27,7 @@ public class TakeShot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_ShooterSubsystem.MoveShooter(.5);//TODO: write constants for shoter subsystem to use here
+    m_ShooterSubsystem.MoveShooter(Constants.ShooterConstants.shooterSpeed);//TODO: write constants for shoter subsystem to use here
   }
 
   // Called every time the scheduler runs while the command is scheduled.

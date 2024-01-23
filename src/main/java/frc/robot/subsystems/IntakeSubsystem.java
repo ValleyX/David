@@ -20,7 +20,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
 
     m_floorIntakeMotor = new TalonSRX(CanIDs.kCAN_FloorIntakeMotor);
-    m_floorBeans = new DigitalInput(DigitalInputIDs.kDIG_FloorBeanBreak);
+    m_floorBeans = new DigitalInput(DigitalInputIDs.kDIG_FloorBeamBreak);
   }
 
   public void IntakeIn() {

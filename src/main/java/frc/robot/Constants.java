@@ -5,7 +5,7 @@
 package frc.robot;
 
 //import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMax;
+//import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,8 +30,7 @@ public final class Constants {
 
   public static final class CanIDs {
 
-    //Have to to set CAN IDs
-
+    //TODO have to get CanIDs
     public static final int kCAN_Roborio = 0;
 
     public static final int kCAN_TurnLeftFront = 1;
@@ -71,24 +70,25 @@ public final class Constants {
 
   public static final class DigitalInputIDs {
 
-    public static final int kDIG_ShootBeanBreak = 0;
-
-    public static final int kDIG_FloorBeanBreak = 1;
-
+    public static final int kDIG_ShootBeamBreak = 0;
+    public static final int kDIG_FloorBeamBreak = 1;
     public static final int kDIG_ElevatorUpLimitSwitch = 2;
     public static final int kDIG_ElevatorDownLimitSwitch = 3;
-
-  
     public static final int kDIG_ClimberDownLimitSwitch = 5;
-
-
-
     public static final int kDIG_PivotDownLimitSwitch = 6; //it will not properly intake before touched
     
   
   }
 
-  public static final class ShooterPivotPID{
+  public static final class ShooterConstants{
+
+    public static final double shooterSpeed = 0.5;
+
+    //Shooter Intake 
+    public static final double OutTake = -0.2;
+    public static final double inTake = 0.2;
+
+    //Shooter PID
     public static final double kP = 0.1;
     public static final double kI = 0.0001;
     public static final double kD = 1;
@@ -192,7 +192,7 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
-    public static final double kDrivingP = 0.04;
+    public static final double kDrivingP = 0.04; //TODO have to tune Driving and turning PID
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;
@@ -214,19 +214,19 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants{ //The NEO motor type
-    public final static double countsPerMotorREV = 42; //found via RevRobotics site revrobotics.com/rev-21-1650/
+    public final static double countsPerMotorREV = 7168; //found via RevRobotics site docs.revrobotics.com/brushless/neo/vortex
     public final static double gearReduction = 5.48251; //mat calculation 
-    public final static double gearDiameter = 1.592; //inches 
-    public final static double countsPerInch = (countsPerMotorREV*gearReduction)/(gearDiameter*Math.PI);
+    public final static double gearDiameterIn = 1.592;  
+    public final static double countsPerInch = (countsPerMotorREV*gearReduction)/(gearDiameterIn*Math.PI);
 
-    public static final double kP = 0.1;
+    //Elevator PID
+    public static final double kP = 0.1; //TODO have to tune Elevator PID 
     public static final double kI = 0.0001;
     public static final double kD = 1;
     public static final double kIz = 0;
     public static final double kFF = 0;
     public static final double kMaxOutput = 1;
     public static final double kMinOutput = -1;
-
 
   }
 
@@ -235,18 +235,25 @@ public final class Constants {
     public final static double kClimberUpSpeed = 0.3;
     public final static double kClimberDownSpeed = -0.3;
 
+    //Climber Pivot PID
+     public static final double kP = 0.1; //TODO have to tune Climber PID 
+     public static final double kI = 0.0001;
+     public static final double kD = 1;
+     public static final double kIz = 0;
+     public static final double kFF = 0;
+     public static final double kMaxOutput = 1;
+     public static final double kMinOutput = -1;
+
 
   }
 
   public static final class IntakeConstants {
-
     public final static double kIntakeInSpeed = 0.4;
     public final static double kExtakeOutSpeed = -0.4;
     public final static double kIntakeStop = 0;
   }
 
   public static final class ColorConstants {
-
     public final static Color kPurpleTarget = new Color(0.211, 0.332, 0.456);
     public final static double colorConfidenceTreshold = 0.94;
 
@@ -256,7 +263,6 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
     public static final int KManipulatorControllerPort = 1;
-
   }
 
   public static final class LightConstants {

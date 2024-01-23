@@ -24,7 +24,6 @@ public class SequentialCommandGroupPlaybackBalance extends SequentialCommandGrou
    // private final DriveSubsystem m_robotDrive;
     //private final LiftSubsystem m_LiftSubsystem;
 
-  
 
     public SequentialCommandGroupPlaybackBalance(TelopCommand.DriveType driveType, int seconds, String filename, DriveSubsystem driveTrain )
     {
@@ -37,8 +36,6 @@ public class SequentialCommandGroupPlaybackBalance extends SequentialCommandGrou
         //put banancing command call here
         );
     }
-
-
 
     @Override
     public boolean runsWhenDisabled() {
