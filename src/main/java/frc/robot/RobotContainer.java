@@ -1,123 +1,188 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// Copyright 2021-2024 FRC 6328
+// http://github.com/Mechanical-Advantage
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation or
+// available in the root directory of this project.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
-import frc.robot.commands.SequentialCommandGroupPlaybackBalance;
-import frc.robot.commands.SequentialCommandGroupPlaybackRecord;
-import frc.robot.commands.TelopCommand;
-import frc.robot.commands.TelopCommand.DriveType;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import java.util.List;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.DriveCommands;
+import frc.robot.commands.PivotandElevator;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.flywheel.*;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
-/*
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
+/**
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SequentialCommandGroupPlaybackRecord m_SeqCmdPlaybackOne;
- // private final SequentialCommandGroupPlaybackRecord m_SeqCmdPlaybackRight;
- // private final SequentialCommandGroupPlaybackRecord m_SeqCmdRecord;
- // private final SequentialCommandGroupPlaybackRecord m_SeqCmdRecordBalance;
 
-  // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final ClimberSubsystem m_climber = new ClimberSubsystem();
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  // Subsystems
+  private final Drive drive;
+  private final ShooterSubsystem shooterSub;
+  // private final Flywheel flywheel;
 
- 
-  // The driver's controller
+  // Controller
+  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController manipulator = new CommandXboxController(1);
 
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser;
+  private final LoggedDashboardNumber flywheelSpeedInput =
+      new LoggedDashboardNumber("Flywheel Speed", 1500.0);
+
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    m_SeqCmdPlaybackOne = new SequentialCommandGroupPlaybackRecord(DriveType.Playback, 15, "LeftRecord", m_robotDrive);
-    //m_SeqCmdPlaybackRight = new SequentialCommandGroupPlaybackRecord(DriveType.Playback, 15, "RightRecord", m_robotDrive, m_liftSubsystem, m_ClawSubsystem);
+    switch (Constants.currentMode) {
+      case REAL:
+        // Real robot, instantiate hardware IO implementations
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOSparkMax(0),
+                new ModuleIOSparkMax(1),
+                new ModuleIOSparkMax(2),
+                new ModuleIOSparkMax(3));
+        shooterSub = new ShooterSubsystem();
+        // flywheel = new Flywheel(new FlywheelIOSparkMax());
+        // drive = new Drive(
+        // new GyroIOPigeon2(),
+        // new ModuleIOTalonFX(0),
+        // new ModuleIOTalonFX(1),
+        // new ModuleIOTalonFX(2),
+        // new ModuleIOTalonFX(3));
+        // flywheel = new Flywheel(new FlywheelIOTalonFX());
+        break;
 
-    //rename this between runs for specific type
-   //m_SeqCmdRecord = new SequentialCommandGroupPlaybackRecord(DriveType.Record, 15, "OneRecord", m_robotDrive, m_liftSubsystem, m_ClawSubsystem);
-  // m_SeqCmdRecordBalance = new SequentialCommandGroupPlaybackRecord(DriveType.Record, 13, "MiddleRecord", m_robotDrive, m_liftSubsystem);
- 
+      case SIM:
+        // Sim robot, instantiate physics sim IO implementations
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim());
+        // flywheel = new Flywheel(new FlywheelIOSim());
+        shooterSub = new ShooterSubsystem();
+        break;
 
-    // Configure the button bindings
-   // configureButtonBindings();
-
-/* 
-    //Works
-    // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true, false),
-            m_robotDrive));
+      default:
+        // Replayed robot, disable IO implementations
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+        shooterSub = new ShooterSubsystem();
+        // flywheel = new Flywheel(new FlywheelIO() {});
+        break;
+    }
+    /*
+        // Set up auto routines
+        NamedCommands.registerCommand(
+            "Run Flywheel",
+            Commands.startEnd(
+                    () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
+                .withTimeout(5.0));
     */
-    //experimental
-    //Only runs this when in telop mode
-    m_robotDrive.setDefaultCommand(new TelopCommand(DriveType.Telop, 0, "",  m_robotDrive));
-  //m_robotDrive.setDefaultCommand(new TelopCommand(DriveType.Record, 15, "BalanceRecord",  m_robotDrive, m_liftSubsystem, m_ClawSubsystem));
-        
-    
-    //chooser run in auto mode
-    m_chooser.setDefaultOption("One", m_SeqCmdPlaybackOne);
-    //m_chooser.addOption("Right",       m_SeqCmdPlaybackRight);
-   // m_chooser.addOption("Record Full 15 secs",  m_SeqCmdRecord);
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    SmartDashboard.putData("Auto Mode", m_chooser);
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    /*
+            autoChooser.addOption(
+            "Flywheel SysId (Quasistatic Forward)",
+            flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+            "Flywheel SysId (Quasistatic Reverse)",
+            flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+            "Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+            "Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    */
+    // Configure the button bindings
+    configureButtonBindings();
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-   * subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-   * passing it to a
-   * {@link JoystickButton}.
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  /* 
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
-            
+
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> controller.getRightX()));
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+
+    shooterSub.setDefaultCommand(
+        //     ElevatorCommand.joystickControl(shooterSub, () -> manipulator.getLeftY()));
+        PivotandElevator.joystickControl(
+            shooterSub, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
+    /*  shooterSub.setDefaultCommand(
+        Pivot.joystickControl(
+            shooterSub,
+            () ->
+                manipulator
+                    .getRightY())); // gets from shooter subsystem setting up a default command that
+    // is connected to the manipulators controlling
+    /*
+        controller
+            .a()
+            .whileTrue(
+                Commands.startEnd(
+                    () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+    */
   }
-  */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -125,11 +190,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    return autoChooser.get();
   }
-
-  public DriveSubsystem getDriveSystem(){
-    return m_robotDrive;
-  }
-
 }

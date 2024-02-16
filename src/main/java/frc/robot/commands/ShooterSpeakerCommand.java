@@ -8,15 +8,17 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShooterSpeakerCommand extends Command {//moves shooter to subwoofer position for shooting MIght not need if we shoot rom starting position
-  
+public class ShooterSpeakerCommand
+    extends Command { // moves shooter to subwoofer position for shooting MIght not need if we shoot
+  // rom starting position
+
   private ShooterSubsystem m_ShooterSubsystem;
   private Joystick m_joystickManipulator;
 
   public ShooterSpeakerCommand(ShooterSubsystem shootersubs, Joystick manipulate) {
     // Use addRequirements() here to declare subsystem dependencies.
-   m_ShooterSubsystem = shootersubs;
-   m_joystickManipulator = manipulate;
+    m_ShooterSubsystem = shootersubs;
+    m_joystickManipulator = manipulate;
     addRequirements(m_ShooterSubsystem);
   }
 

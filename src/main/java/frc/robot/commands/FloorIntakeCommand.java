@@ -12,25 +12,25 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class FloorIntakeCommand extends Command {
 
   private IntakeSubsystem m_IntakeSubsystem;
-  private ShooterSubsystem m_ShooterSubsystem; 
+  private ShooterSubsystem m_ShooterSubsystem;
   private Joystick m_joystickManipulator;
 
-  public FloorIntakeCommand(IntakeSubsystem intakesub, ShooterSubsystem shootersub, Joystick manipulate) {
+  public FloorIntakeCommand(
+      IntakeSubsystem intakesub, ShooterSubsystem shootersub, Joystick manipulate) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_IntakeSubsystem = intakesub;
     m_ShooterSubsystem = shootersub;
     m_joystickManipulator = manipulate;
     addRequirements(m_IntakeSubsystem);
     addRequirements(m_ShooterSubsystem);
-
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(m_ShooterSubsystem.IsShooterAligned()){
-      m_IntakeSubsystem.IntakeIn();
-      m_ShooterSubsystem.IntakeIn();
+    if (m_ShooterSubsystem.IsShooterAligned()) {
+      m_IntakeSubsystem.in();
+      //  m_ShooterSubsystem.IntakeIn();
     }
   }
 
@@ -45,9 +45,9 @@ public class FloorIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_ShooterSubsystem.IsNoteRecieved()){
-      m_IntakeSubsystem.IntakeStop();
-      m_ShooterSubsystem.IntakeStop();
+    if (m_ShooterSubsystem.IsNoteRecieved()) {
+      m_IntakeSubsystem.stop();
+      //  m_ShooterSubsystem.IntakeStop();
       return true;
     }
     return false;

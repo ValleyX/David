@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class ClimberUp extends Command {
@@ -20,18 +21,16 @@ public class ClimberUp extends Command {
   @Override
   public void initialize() {
 
-
-    m_ClimberSubsystem.ClimbersExtend();
-
-
+    // m_ClimberSubsystem.Extend();
+    if (m_ClimberSubsystem.GetAngle() <= Constants.Climber.kUpAngle) {
+      m_ClimberSubsystem.GoToAngle(Constants.Climber.kUpAngle);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
 
-  //activate the climber
-  
+  // activate the climber
 
-  
   @Override
   public void execute() {}
 
@@ -41,9 +40,12 @@ public class ClimberUp extends Command {
 
   // Returns true when the command should end.
 
-  //check if encoders and angle are where they should be
+  // check if encoders and angle are where they should be
   @Override
   public boolean isFinished() {
+    if (m_ClimberSubsystem.GetAngle() >= Constants.Climber.kUpAngle) {
+      return true;
+    }
     return false;
   }
 }

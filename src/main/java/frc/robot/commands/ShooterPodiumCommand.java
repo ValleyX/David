@@ -9,14 +9,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterPodiumCommand extends Command {
-  
+
   private ShooterSubsystem m_ShooterSubsystem;
   private Joystick m_joystickManipulator;
 
   public ShooterPodiumCommand(ShooterSubsystem shootersubs, Joystick manipulate) {
     // Use addRequirements() here to declare subsystem dependencies.
-   m_ShooterSubsystem = shootersubs;
-   m_joystickManipulator = manipulate;
+    m_ShooterSubsystem = shootersubs;
+    m_joystickManipulator = manipulate;
     addRequirements(m_ShooterSubsystem);
   }
 
@@ -37,10 +37,13 @@ public class ShooterPodiumCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_ShooterSubsystem.GetPivotPosition() == 0){//TODO; replace 0 with desired angle
+    /*
+    if (m_ShooterSubsystem.GetPivotPosition() == 0) { // TODO; replace 0 with desired angle
       m_ShooterSubsystem.MovePivot(0);
       return true;
     }
     return false;
+    */
+    return true;
   }
 }

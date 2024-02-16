@@ -10,7 +10,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterReset extends Command {
   /** Creates a new ShooterReset. */
-    private ShooterSubsystem m_ShooterSubsystem;
+  private ShooterSubsystem m_ShooterSubsystem;
+
   private Joystick m_joystickManipulator;
 
   public ShooterReset(ShooterSubsystem shooterSubs, Joystick manipulate) {
@@ -30,10 +31,10 @@ public class ShooterReset extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_ShooterSubsystem.IsElevatorDown()){
+    if (m_ShooterSubsystem.IsElevatorDown()) {
       m_ShooterSubsystem.MoveElevator(0);
     }
-    if(m_ShooterSubsystem.IsShooterAligned()){
+    if (m_ShooterSubsystem.IsShooterAligned()) {
       m_ShooterSubsystem.MovePivot(0);
     }
   }
@@ -45,7 +46,7 @@ public class ShooterReset extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_ShooterSubsystem.IsElevatorDown() && m_ShooterSubsystem.IsShooterAligned()){
+    if (m_ShooterSubsystem.IsElevatorDown() && m_ShooterSubsystem.IsShooterAligned()) {
       return true;
     }
     return false;

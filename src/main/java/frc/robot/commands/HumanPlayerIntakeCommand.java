@@ -11,6 +11,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class HumanPlayerIntakeCommand extends Command {
   /** Creates a new HumanPlayerIntake. */
   private ShooterSubsystem m_ShooterSubsystem;
+
   private Joystick m_joystickManipulator;
 
   enum NoteState {
@@ -20,8 +21,6 @@ public class HumanPlayerIntakeCommand extends Command {
   }
 
   private NoteState noteState;
-
-  
 
   public HumanPlayerIntakeCommand(ShooterSubsystem shootersub, Joystick manipulate) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -33,7 +32,7 @@ public class HumanPlayerIntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_ShooterSubsystem.ExtakeOut();
+    // m_ShooterSubsystem.ExtakeOut();
     noteState = NoteState.WAITING_FOR_NOTE;
   }
 
@@ -43,12 +42,10 @@ public class HumanPlayerIntakeCommand extends Command {
     if (m_ShooterSubsystem.IsNoteRecieved() && noteState == NoteState.WAITING_FOR_NOTE) {
       noteState = NoteState.NOTE_RECIEVED;
     }
-    if(!m_ShooterSubsystem.IsNoteRecieved() && noteState == NoteState.NOTE_RECIEVED){
+    if (!m_ShooterSubsystem.IsNoteRecieved() && noteState == NoteState.NOTE_RECIEVED) {
       noteState = NoteState.NOTE_PAST_BEAM_BREAK;
-      m_ShooterSubsystem.IntakeIn();
+      //  m_ShooterSubsystem.IntakeIn();
     }
-    
-
   }
 
   // Called once the command ends or is interrupted.
@@ -58,7 +55,7 @@ public class HumanPlayerIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_ShooterSubsystem.IsNoteRecieved() && noteState == NoteState.NOTE_PAST_BEAM_BREAK){
+    if (m_ShooterSubsystem.IsNoteRecieved() && noteState == NoteState.NOTE_PAST_BEAM_BREAK) {
       return true;
     }
     return false;
