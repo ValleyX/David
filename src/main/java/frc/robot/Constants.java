@@ -44,7 +44,7 @@ public final class Constants {
 
     public static final int kCAN_ClimberMotorLeft = 12;
     public static final int kCAN_ClimberMotorRight = 13;
-    public static final int kCAN_ClimberPivotMotor = 14;
+    // public static final int kCAN_ClimberPivotSensor = 14;
     // public static final int kCAN_ClimberAngle = 22;
 
     public static final int kCAN_PivotMotor = 15;
@@ -67,13 +67,24 @@ public final class Constants {
 
   public static final class DigitalInputIDs {
 
-    public static final int kDIG_ShootBeamBreak = 0;
-    public static final int kDIG_FloorBeamBreak = 1;
-    public static final int kDIG_ElevatorUpLimitSwitch = 2;
+    public static final int kDIG_ShootBeamBreak = 8;
+    public static final int kDIG_FloorBeamBreak = 9;
+    /*public static final int kDIG_ElevatorUpLimitSwitch = 2;
     public static final int kDIG_ElevatorDownLimitSwitch = 3;
     public static final int kDIG_ClimberDownLimitSwitch = 5;
     public static final int kDIG_PivotDownLimitSwitch =
-        6; // it will not properly intake before touched
+        6; // it will not properly intake before touched*/
+  }
+
+  public static final class PWMIDs {
+
+    public static final int kPWM_TowerBlinkin = 8;
+    public static final int kPWM_BaseBlinkin = 9;
+    /*public static final int kDIG_ElevatorUpLimitSwitch = 2;
+    public static final int kDIG_ElevatorDownLimitSwitch = 3;
+    public static final int kDIG_ClimberDownLimitSwitch = 5;
+    public static final int kDIG_PivotDownLimitSwitch =
+        6; // it will not properly intake before touched*/
   }
 
   public static final class ShooterConstants {
@@ -203,20 +214,40 @@ public final class Constants {
 
   public static final class Elevator { // The NEO motor type
     public static final double countsPerMotorREV =
-        7168; // found via RevRobotics site docs.revrobotics.com/brushless/neo/vortex
+        1; // 7168; // found via RevRobotics site docs.revrobotics.com/brushless/neo/vortex
     public static final double gearReduction = 5.48251; // mat calculation
     public static final double gearDiameterIn = 1.592;
-    public static final double countsPerInch =
+    public static final double rotationsPerInch =
         (countsPerMotorREV * gearReduction) / (gearDiameterIn * Math.PI);
 
     // Elevator PID
-    public static final double kP = 0.1; // TODO have to tune Elevator PID
-    public static final double kI = 0.0001;
-    public static final double kD = 1;
+    public static final double kP = 1; // TODO have to tune Elevator PID
+    public static final double kI = 0; // .0001
+    public static final double kD = 0; // 1
     public static final double kIz = 0;
     public static final double kFF = 0;
     public static final double kMaxOutput = 1;
-    public static final double kMinOutput = -1;
+    public static final double kMinOutput = -.3;
+  }
+
+  public static final class Pivot { // The NEO motor type
+    public static final double countsPerMotorREV =
+        1; // found via RevRobotics site docs.revrobotics.com/brushless/neo/vortex
+    public static final double gearReduction = 74.4; // mat calculation
+    public static final double gearDiameterIn = 1;
+    public static final double RotationsPerDegree = // .2328;
+        (gearReduction) / (360);
+
+    // Pivit PID
+    public static final double kP = 1; // .5 // TODO have to tune Pivit PID
+    public static final double kI = 0; // .00025
+    // public static final double kP = 1; // TODO have to tune Pivit PID
+    // public static final double kI = 0.000;
+    public static final double kD = 0;
+    public static final double kIz = 0;
+    public static final double kFF = 0;
+    public static final double kMaxOutput = 0.4;
+    public static final double kMinOutput = -0.4;
   }
 
   public static final class Climber { // Neo motor type
@@ -237,7 +268,7 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final double kInSpeed = 0.4;
+    public static final double kInSpeed = 1;
     public static final double kOutSpeed = -0.4;
     public static final double kStop = 0;
   }

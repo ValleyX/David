@@ -5,36 +5,30 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShooterIntakeSubsystem;
-import frc.robot.subsystems.flywheel.Flywheel;
+import frc.robot.subsystems.PivotSubsystem;
 
-public class TakeShot extends Command {
-  /** Creates a new TakeShot. */
-  private ShooterIntakeSubsystem m_ShooterIntakeSubsystem;
+public class PivotMoveToPosition extends Command {
+  /** Creates a new PivotMoveToPosition. */
+  private PivotSubsystem m_PivotSubsystem;
 
-  private Flywheel m_Flywheel;
-  private int waitCount;
+  private double m_PivotDegrees;
 
-  public TakeShot(ShooterIntakeSubsystem shooterintakesubs, Flywheel flywheel) {
+  public PivotMoveToPosition(PivotSubsystem pivotSubs, double pivotDegrees) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_ShooterIntakeSubsystem = shooterintakesubs;
-    m_Flywheel = flywheel;
-    waitCount = 0;
-
-    addRequirements(m_ShooterIntakeSubsystem, m_Flywheel);
+    m_PivotSubsystem = pivotSubs;
+    m_PivotDegrees = pivotDegrees;
+    addRequirements(m_PivotSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_ShooterIntakeSubsystem.MoveShooterIntake(.5);
+    m_PivotSubsystem.MovePivotTo(m_PivotDegrees);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    waitCount++;
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -43,11 +37,10 @@ public class TakeShot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (waitCount > 5) {
-      m_ShooterIntakeSubsystem.MoveShooterIntake(0);
-      m_Flywheel.stop();
+    if (Math.abs(m_PivotSubsystem.pivotPos() - m_PivotDegrees) < 2) {
       return true;
     }
+
     return false;
   }
 }

@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 
 /**
  * Module IO implementation for SparkMax drive motor controller, SparkMax turn motor controller (NEO
@@ -61,14 +62,16 @@ public class ModuleIOSparkMax implements ModuleIO {
       case 0: // LF
         // driveSparkMax = new CANSparkMax(1, MotorType.kBrushless);
         // turnSparkMax = new CANSparkMax(2, MotorType.kBrushless);
-        driveSparkMax = new CANSparkFlex(5, MotorType.kBrushless);
+        driveSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_DriveLeftFront, MotorType.kBrushless);
         // driveSparkMax.setInverted(false);
-        turnSparkMax = new CANSparkFlex(1, MotorType.kBrushless);
+        turnSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_TurnLeftFront, MotorType.kBrushless);
         //  turnSparkMax.setInverted(true);
         // isTurnMotorInverted = false;
         isDriverMotorInverted = true;
 
-        turnAbsoluteEncoder = new CANcoder(1, "CTRCAN");
+        turnAbsoluteEncoder = new CANcoder(Constants.CTRECanIDs.kCAN_EncoderLeftFront, "CTRCAN");
 
         // turnAbsoluteEncoder = new AnalogInput(0);
         //     absoluteEncoderOffset = new Rotation2d(-0.210693 * 2 * Math.PI); // MUST BE
@@ -76,28 +79,34 @@ public class ModuleIOSparkMax implements ModuleIO {
         // absoff = -0.3271;
         break;
       case 1: // RF
-        driveSparkMax = new CANSparkFlex(7, MotorType.kBrushless);
+        driveSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_DriveRightFront, MotorType.kBrushless);
         // driveSparkMax.setInverted(true);
-        turnSparkMax = new CANSparkFlex(3, MotorType.kBrushless);
+        turnSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_TurnRightFront, MotorType.kBrushless);
         isTurnMotorInverted = false;
         // turnSparkMax.setInverted(true);
-        turnAbsoluteEncoder = new CANcoder(3, "CTRCAN");
+        turnAbsoluteEncoder = new CANcoder(Constants.CTRECanIDs.kCAN_EncoderRightFront, "CTRCAN");
         // absoluteEncoderOffset = new Rotation2d(0.2015 * 2 * Math.PI); // MUST BE CALIBRATED
         // absoff = 0.2563;
 
         // absoluteEncoderOffset = new Rotation2d(index)
         break;
       case 2: // LB
-        driveSparkMax = new CANSparkFlex(6, MotorType.kBrushless);
-        turnSparkMax = new CANSparkFlex(2, MotorType.kBrushless);
-        turnAbsoluteEncoder = new CANcoder(2, "CTRCAN");
+        driveSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_DriveLeftBack, MotorType.kBrushless);
+        turnSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_TurnLeftBack, MotorType.kBrushless);
+        turnAbsoluteEncoder = new CANcoder(Constants.CTRECanIDs.kCAN_EncoderLeftBack, "CTRCAN");
         // absoluteEncoderOffset = new Rotation2d(-0.289307 * 2 * Math.PI); // MUST BE CALIBRATED
         // absoff = -0.388184;
         break;
       case 3: // RB
-        driveSparkMax = new CANSparkFlex(8, MotorType.kBrushless);
-        turnSparkMax = new CANSparkFlex(4, MotorType.kBrushless);
-        turnAbsoluteEncoder = new CANcoder(4, "CTRCAN");
+        driveSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_DriveRightBack, MotorType.kBrushless);
+        turnSparkMax =
+            new CANSparkFlex(Constants.RevCanIDs.kCAN_TurnRightBack, MotorType.kBrushless);
+        turnAbsoluteEncoder = new CANcoder(Constants.CTRECanIDs.kCAN_EncoderRightBack, "CTRCAN");
         // absoluteEncoderOffset = new Rotation2d(0.213623 * 2 * Math.PI); // MUST BE CALIBRATED
         // absoff = 0.201416;
         break;

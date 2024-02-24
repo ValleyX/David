@@ -23,8 +23,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PivotandElevator;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.commands.ElevatorMoveToPosition;
+import frc.robot.commands.FloorIntakeCommand;
+import frc.robot.commands.PivotMoveToPosition;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.ShooterIntakeSubsystem;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.flywheel.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -40,8 +45,12 @@ public class RobotContainer {
 
   // Subsystems
   private final Drive drive;
-  private final ShooterSubsystem shooterSub;
-  // private final Flywheel flywheel;
+  // private final ShooterSubsystem shooterSub;
+  private final Flywheel flywheel;
+  private final ElevatorSubsystem elevatorSub;
+  private final PivotSubsystem pivotSub;
+  private final ShooterIntakeSubsystem shooterIntakeSub;
+  private final IntakeSubsystem intakeSub;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -50,7 +59,7 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final LoggedDashboardNumber flywheelSpeedInput =
-      new LoggedDashboardNumber("Flywheel Speed", 1500.0);
+      new LoggedDashboardNumber("Flywheel Speed", 6000.0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -65,15 +74,22 @@ public class RobotContainer {
                 new ModuleIOSparkMax(1),
                 new ModuleIOSparkMax(2),
                 new ModuleIOSparkMax(3));
-        shooterSub = new ShooterSubsystem();
-        // flywheel = new Flywheel(new FlywheelIOSparkMax());
-        // drive = new Drive(
-        // new GyroIOPigeon2(),
-        // new ModuleIOTalonFX(0),
-        // new ModuleIOTalonFX(1),
-        // new ModuleIOTalonFX(2),
-        // new ModuleIOTalonFX(3));
-        // flywheel = new Flywheel(new FlywheelIOTalonFX());
+        // shooterSub = new ShooterSubsystem();
+        flywheel = new Flywheel(new FlywheelIOSparkMax());
+        elevatorSub = new ElevatorSubsystem();
+        pivotSub = new PivotSubsystem();
+        shooterIntakeSub = new ShooterIntakeSubsystem();
+        intakeSub = new IntakeSubsystem();
+        /*
+              drive =
+                  new Drive(
+                      new GyroIOPigeon2(),
+                      new ModuleIOTalonFX(0),
+                      new ModuleIOTalonFX(1),
+                      new ModuleIOTalonFX(2),
+                      new ModuleIOTalonFX(3));
+              flywheel = new Flywheel(new FlywheelIOTalonFX());
+        */
         break;
 
       case SIM:
@@ -85,8 +101,12 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        // flywheel = new Flywheel(new FlywheelIOSim());
-        shooterSub = new ShooterSubsystem();
+        flywheel = new Flywheel(new FlywheelIOSim());
+        /// shooterSub = new ShooterSubsystem();
+        elevatorSub = new ElevatorSubsystem();
+        pivotSub = new PivotSubsystem();
+        shooterIntakeSub = new ShooterIntakeSubsystem();
+        intakeSub = new IntakeSubsystem();
         break;
 
       default:
@@ -98,8 +118,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        shooterSub = new ShooterSubsystem();
-        // flywheel = new Flywheel(new FlywheelIO() {});
+        // shooterSub = new ShooterSubsystem();
+        flywheel = new Flywheel(new FlywheelIO() {});
+        elevatorSub = new ElevatorSubsystem();
+        pivotSub = new PivotSubsystem();
+        intakeSub = new IntakeSubsystem();
+        shooterIntakeSub = new ShooterIntakeSubsystem();
         break;
     }
     /*
@@ -110,7 +134,9 @@ public class RobotContainer {
                     () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
                 .withTimeout(5.0));
     */
+
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // autoChooser.addOption("test", elevatorSub.getDefaultCommand());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -164,10 +190,31 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    shooterSub.setDefaultCommand(
-        //     ElevatorCommand.joystickControl(shooterSub, () -> manipulator.getLeftY()));
-        PivotandElevator.joystickControl(
+    // elevatorSub.setDefaultCommand(
+    //   ElevatorCommand.joystickControl(elevatorSub, () -> manipulator.getLeftY()));
+    /*  PivotandElevator.joystickControl(
             shooterSub, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
+
+    manipulator
+        .b()
+        .onTrue( // while b is pressed on manipulator controller; TODO whole sequence needs to be
+            // tested
+            new ElevatorMoveToPosition(elevatorSub, 10) // moves elavator up to a position
+                .alongWith(
+                    new PivotMoveToPosition(
+                        pivotSub, 5)) // moves pivot to needed position in parrallel with elevator
+                .alongWith(
+                    new ShooterRampUpVelocity(
+                        flywheel,
+                        6000)) // starts ramping up velocity in parrelell with the pivot and
+                // elevator
+                .andThen(
+                    new TakeShot(
+                        shooterIntakeSub,
+                        flywheel))); // turns on shooter intake after all other components have
+    // reached their spot
+
+    manipulator.a().onTrue(new ShooterAmpCommand(shooterSub, 10, 5));
     /*  shooterSub.setDefaultCommand(
         Pivot.joystickControl(
             shooterSub,
@@ -175,13 +222,34 @@ public class RobotContainer {
                 manipulator
                     .getRightY())); // gets from shooter subsystem setting up a default command that
     // is connected to the manipulators controlling
-    /*
-        controller
-            .a()
-            .whileTrue(
-                Commands.startEnd(
-                    () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-    */
+    //was end of block comment*/
+
+    controller
+        .a()
+        .whileTrue(
+            Commands.startEnd(
+                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+
+    // Testing stiff starts here
+    // manipulator.a().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
+    // manipulator.b().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
+    manipulator.x().onTrue(new PivotMoveToPosition(pivotSub, 30));
+    // manipulator.y().onTrue(new PivotMoveToPosition(pivotSub, 90));
+    manipulator.b().onTrue(new PivotMoveToPosition(pivotSub, 90));
+    manipulator.a().onTrue(new PivotMoveToPosition(pivotSub, 150));
+    manipulator.y().onTrue(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub));
+
+    manipulator.leftBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
+    // .alongWith(new PivotMoveToPosition(pivotSub, 30)));
+    manipulator.rightBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 10));
+    // .alongWith(new PivotMoveToPosition(pivotSub, 40)));
+    manipulator.povUp().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
+    // .andThen(new PivotMoveToPosition(pivotSub, 50)));
+    manipulator
+        .povDown()
+        .onTrue(
+            new ElevatorMoveToPosition(elevatorSub, 60)
+                .andThen(new PivotMoveToPosition(pivotSub, 60)));
   }
 
   /**
@@ -191,5 +259,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+    // return elevatorSub.getCurrentCommand();
   }
 }

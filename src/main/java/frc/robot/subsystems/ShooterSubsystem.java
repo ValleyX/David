@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 // import com.ctre.phoenix.sensors.CANCoderJNI;
 // import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
@@ -26,7 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final CANSparkFlex m_ShooterPivotMotor; // Used to aim shooter
   private final CANSparkFlex m_ElevatorMotor; // vertical lift of shooting mechanism
 
-  // private final TalonSRX   m_ShooterIntakeMotor; // Used to intake from floor intake motors to
+  private final TalonSRX m_ShooterIntakeMotor; // Used to intake from floor intake motors to
   // feed shooter motors
 
   private final DigitalInput m_ShooterBeams;
@@ -39,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final RelativeEncoder m_ElevatorEncoder;
   private final RelativeEncoder m_PivotEncoder;
 
-  // private SparkPIDController m_PivotPIDController;
+  private SparkPIDController m_PivotPIDController;
   private SparkPIDController m_ElevatorPIDController;
 
   private SparkLimitSwitch m_PivotIntakeLimitSwitch;
@@ -63,7 +65,7 @@ public class ShooterSubsystem extends SubsystemBase {
         new CANSparkFlex(
             RevCanIDs.kCAN_ElevatorMotor,
             com.revrobotics.CANSparkLowLevel.MotorType.kBrushless); //
-    // m_ShooterIntakeMotor = new TalonSRX(RevCanIDs.kCAN_ShooterIntakeMotor);
+    m_ShooterIntakeMotor = new TalonSRX(RevCanIDs.kCAN_ShooterIntakeMotor);
 
     // These lines set the two motors to their default settings
     m_ShooterPivotMotor.restoreFactoryDefaults();
@@ -89,10 +91,10 @@ public class ShooterSubsystem extends SubsystemBase {
     // m_ShooterMotor.getEncoder(); // TODO have to check later NEED TO ADD VELOCITY ff PID
 
     m_PivotEncoder = m_ShooterPivotMotor.getEncoder();
-    // m_PivotPIDController =
-    //    m_ShooterPivotMotor.getPIDController(); // setting up PID controller from the motor
-    // m_PivotPIDController.setFeedbackDevice(
-    // m_ShooterEncoder); // setting the encoder to feed back into the motor to make the motor
+    m_PivotPIDController =
+        m_ShooterPivotMotor.getPIDController(); // setting up PID controller from the motor
+    m_PivotPIDController.setFeedbackDevice(
+        m_PivotEncoder); // setting the encoder to feed back into the motor to make the motor
     // beable to go to specfic cordinates
 
     // TODO Theses could be normally closed or open, Ask matt, normally closed means it runs voltage
@@ -106,14 +108,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_ShooterPivotMotor.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
 
     // seting PID coeficients for pivot motor
-    /*
+
     m_PivotPIDController.setP(ShooterConstants.kP);
     m_PivotPIDController.setI(ShooterConstants.kI);
     m_PivotPIDController.setD(ShooterConstants.kD);
     m_PivotPIDController.setIZone(ShooterConstants.kIz);
     m_PivotPIDController.setFF(ShooterConstants.kFF);
     m_PivotPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
-    */
+
     // Display PID cofficients for shooter pivot motor on Smartboard
     SmartDashboard.putNumber("P Gain", ShooterConstants.kP);
     SmartDashboard.putNumber("I Gain", ShooterConstants.kI);
@@ -126,7 +128,6 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Degrees of Pivot: ", m_PivotEncoder.getPosition() / 360);
 
     // setting PID coefficients for Elevator motor
-    /*
 
     m_PivotPIDController.setP(Elevator.kP);
     m_PivotPIDController.setI(Elevator.kI);
@@ -134,7 +135,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_PivotPIDController.setIZone(Elevator.kIz);
     m_PivotPIDController.setFF(Elevator.kFF);
     m_PivotPIDController.setOutputRange(Elevator.kMinOutput, Elevator.kMaxOutput);
-    */
+
     // Display PID cofficients for Elevator on Smartboard
     SmartDashboard.putNumber("P Gain", Elevator.kP);
     SmartDashboard.putNumber("I Gain", Elevator.kI);
@@ -146,16 +147,15 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Set Rotations", 0);
     SmartDashboard.putNumber("Elevator Position", m_ElevatorEncoder.getPosition());
   }
-  /*
+
   public void MovePivotTo(double positionDeg) { // Move Pivot motor to specific location by PID loop
     // m_PivotPIDController
     // TODO take degrees to rotations
 
     m_PivotPIDController.setReference(
-        (positionDeg * 360),
+        (positionDeg /*  * 360*/),
         ControlType.kPosition); // TODO check if works and put rotations as input
   }
-  */
 
   public void MoveElevator(double speed) { // moves elevator with a given speed
     m_ElevatorMotor.set(speed);
@@ -173,12 +173,20 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_ElevatorEncoder.getPosition();
   }
 
+  public double pivotPos() {
+    return m_PivotEncoder.getPosition();
+  }
+
   public void MovePivot(double speed) { // moves pivot with a given speed
     if (Math.abs(speed) > 0.1) {
       m_ShooterPivotMotor.set(speed);
     } else {
       m_ShooterPivotMotor.set(0);
     }
+  }
+
+  public void MoveShooterIntake(double speed) {
+    m_ShooterIntakeMotor.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
   public void MovePivotAndElevator(double elevatorSpeed, double pivotSpeed) {
@@ -254,7 +262,7 @@ public class ShooterSubsystem extends SubsystemBase {
     double shooterPivotMin =
         SmartDashboard.getNumber("shooter pivot Min Output", ShooterConstants.kMinOutput);
     double shooterPivotRotations = SmartDashboard.getNumber("shooter pivot Set Rotations", 0);
-    /*
+
     if ((shooterPivotP != ShooterConstants.kP)) {
       m_PivotPIDController.setP(shooterPivotP);
       shooterPivotP = ShooterConstants.kP;
@@ -283,7 +291,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     m_PivotPIDController.setReference(
         shooterPivotRotations, ControlType.kPosition); // This makes the PID loop go
-    */
+
     // Display PID cofficients for elavator motor on Smartboard
     double elavatorP = SmartDashboard.getNumber("elavator P Gain", Elevator.kP);
     double elavatorI = SmartDashboard.getNumber("elavator I Gain", Elevator.kI);
