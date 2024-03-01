@@ -118,7 +118,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     driveSparkMax.restoreFactoryDefaults();
     turnSparkMax.restoreFactoryDefaults();
 
-    driveSparkMax.setCANTimeout(250);
+    driveSparkMax.setCANTimeout(250); // 250
     turnSparkMax.setCANTimeout(250);
 
     driveEncoder = driveSparkMax.getEncoder();
@@ -127,9 +127,9 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     turnSparkMax.setInverted(isTurnMotorInverted);
     driveSparkMax.setInverted(isDriverMotorInverted);
-    driveSparkMax.setSmartCurrentLimit(40);
+    driveSparkMax.setSmartCurrentLimit(40); // 40
     turnSparkMax.setSmartCurrentLimit(30);
-    driveSparkMax.enableVoltageCompensation(12.0);
+    // driveSparkMax.enableVoltageCompensation(12.0);
     turnSparkMax.enableVoltageCompensation(12.0);
 
     driveEncoder.setPosition(0.0);
@@ -140,8 +140,8 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnRelativeEncoder.setMeasurementPeriod(10);
     turnRelativeEncoder.setAverageDepth(2);
 
-    driveSparkMax.setCANTimeout(0);
-    turnSparkMax.setCANTimeout(0);
+    // driveSparkMax.setCANTimeout(0);
+    // turnSparkMax.setCANTimeout(0);
 
     driveSparkMax.burnFlash();
     turnSparkMax.burnFlash();
@@ -156,6 +156,10 @@ public class ModuleIOSparkMax implements ModuleIO {
         Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.getVelocity()) / DRIVE_GEAR_RATIO;
     inputs.driveAppliedVolts = driveSparkMax.getAppliedOutput() * driveSparkMax.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveSparkMax.getOutputCurrent()};
+
+    SmartDashboard.putNumber("driveAppliedVolts " + index, inputs.driveAppliedVolts);
+    SmartDashboard.putNumber("getAppliedOutput " + index, driveSparkMax.getAppliedOutput());
+    SmartDashboard.putNumber("getBusVoltage " + index, driveSparkMax.getBusVoltage());
 
     SmartDashboard.putNumber(
         "hard ab " + index, turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble());

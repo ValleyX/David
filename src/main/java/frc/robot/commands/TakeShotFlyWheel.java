@@ -9,20 +9,25 @@ import frc.robot.subsystems.ShooterIntakeSubsystem;
 import frc.robot.subsystems.flywheel.Flywheel;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
-public class TakeShot extends Command {
+public class TakeShotFlyWheel extends Command {
   /** Creates a new TakeShot. */
   private ShooterIntakeSubsystem m_ShooterIntakeSubsystem;
 
   private Flywheel m_Flywheel;
   private int waitCount;
+  private double m_RPM;
+  private boolean m_shootEngaged;
+  private final double M_ERROR = 10; // in rpm
   private final LoggedDashboardNumber flywheelSpeedInput =
       new LoggedDashboardNumber("Flywheel Speed", 6000.0);
 
-  public TakeShot(ShooterIntakeSubsystem shooterintakesubs, Flywheel flywheel) {
+  public TakeShotFlyWheel(ShooterIntakeSubsystem shooterintakesubs, Flywheel flywheel, Double RPM) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_ShooterIntakeSubsystem = shooterintakesubs;
     m_Flywheel = flywheel;
     waitCount = 0;
+    m_RPM = RPM;
+    m_shootEngaged = false;
 
     addRequirements(m_ShooterIntakeSubsystem, m_Flywheel);
   }
@@ -33,31 +38,36 @@ public class TakeShot extends Command {
     // m_ShooterIntakeSubsystem.MoveShooterIntake(.5);
     waitCount = 0;
     // m_Flywheel.runVelocity(flywheelSpeedInput.get());
-    m_Flywheel.runVolts(0.9);
+    // m_Flywheel.runVolts(0.9);
+    m_Flywheel.runVelocity(m_RPM);
+    m_shootEngaged = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    waitCount++;
-    if (waitCount == 250) {
+
+    if (m_Flywheel.getVelocityRPM() > m_RPM) {
       m_ShooterIntakeSubsystem.MoveShooterIntake(1);
+      m_shootEngaged = true;
+    }
+    if (m_shootEngaged) {
+      waitCount++;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Flywheel.runVolts(0);
     m_ShooterIntakeSubsystem.MoveShooterIntake(0);
+    m_Flywheel.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (waitCount > 300) {
-      // m_ShooterIntakeSubsystem.MoveShooterIntake(0);
-      // m_Flywheel.stop();
+    if (waitCount > 100) {
+
       // m_Flywheel.runVolts(0);
       // m_ShooterIntakeSubsystem.MoveShooterIntake(0);
       return true;

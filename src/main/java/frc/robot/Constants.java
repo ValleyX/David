@@ -257,6 +257,13 @@ public final class Constants {
     public static final double kUpAngle = 45;
     public static final double kDownAngle = 10;
 
+    public static final double countsPerMotorREV =
+        1; // found via RevRobotics site docs.revrobotics.com/brushless/neo/vortex
+    public static final double gearReduction = 100; // mat calculation
+    public static final double gearDiameterIn = 1.25;
+    public static final double RotationsPerDegree = // .2328;
+        (gearReduction) / (gearDiameterIn * Math.PI);
+
     // Climber Pivot PID
     public static final double kP = 0.1; // TODO have to tune Climber PID
     public static final double kI = 0.0001;

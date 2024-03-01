@@ -77,6 +77,14 @@ public class ClimberSubsystem extends SubsystemBase {
     m_LeftClimber.set(Climber.kDownSpeed);
   }
 
+  public void moveClimbers(double speed) {
+    if (Math.abs(speed) > 0.1) {
+      m_LeftClimber.set(speed);
+    } else {
+      m_LeftClimber.set(0);
+    }
+  }
+
   public void GoToAngle(double degrees) {
     m_ClimberPIDController.setReference(
         degrees,

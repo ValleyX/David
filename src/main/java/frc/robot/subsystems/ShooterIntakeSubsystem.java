@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -29,6 +30,7 @@ public class ShooterIntakeSubsystem extends SubsystemBase {
     m_shooterBeamsSupplier = () -> m_ShooterBeams.get();
     SmartDashboard.putBoolean("shooter Beam Break", m_ShooterBeams.get());
     m_ShooterIntakeMotor.setInverted(true);
+    m_ShooterIntakeMotor.setNeutralMode(NeutralMode.Brake);
   }
 
   public void MoveShooterIntake(double speed) {

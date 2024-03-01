@@ -24,6 +24,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   private SparkPIDController m_PivotPIDController;
   private SparkLimitSwitch m_PivotIntakeLimitSwitch;
+  private final double AngleAdjust = 2.425;
   /** Creates a new PivotSubsystem. */
   public PivotSubsystem() {
     m_ShooterPivotMotor =
@@ -55,7 +56,8 @@ public class PivotSubsystem extends SubsystemBase {
     // m_PivotEncoder.setZeroOffset(0.827);
 
     m_PivotEncoder.setPosition(
-        Pivot.RotationsPerDegree * (180 - (m_PivotAbsoluteEncoder.getPosition() * 360)));
+        Pivot.RotationsPerDegree
+            * (180 - ((m_PivotAbsoluteEncoder.getPosition()) * 360) + AngleAdjust));
     // seting PID coeficients for pivot motor
 
     m_PivotPIDController.setP(Pivot.kP);
@@ -76,7 +78,7 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Set Rotations", 0);
     SmartDashboard.putNumber("Rotations of Pivot: ", m_PivotEncoder.getPosition());
     SmartDashboard.putNumber(
-        "Degrees of Pivot: ", m_PivotEncoder.getPosition() / Pivot.RotationsPerDegree);
+        "Degrees of Pivot: ", 90 - (m_PivotEncoder.getPosition() / Pivot.RotationsPerDegree));
     SmartDashboard.putNumber("Absolute Encoder Pivot", m_PivotAbsoluteEncoder.getPosition());
     SmartDashboard.putNumber(
         "Absolute Encoder Pivot Degrees", m_PivotAbsoluteEncoder.getPosition() * 360);
@@ -90,7 +92,7 @@ public class PivotSubsystem extends SubsystemBase {
     // TODO take degrees to rotations
 
     m_PivotPIDController.setReference(
-        (positionDeg * Pivot.RotationsPerDegree),
+        ((90 - positionDeg) * Pivot.RotationsPerDegree),
         ControlType.kPosition); // TODO check if works and put rotations as input
   }
 
@@ -125,12 +127,12 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Rotations of Pivot: ", m_PivotEncoder.getPosition());
     SmartDashboard.putNumber("Absolute Encoder Pivot", m_PivotAbsoluteEncoder.getPosition());
     SmartDashboard.putNumber(
-        "Degrees of Pivot: ", m_PivotEncoder.getPosition() / Pivot.RotationsPerDegree);
+        "Degrees of Pivot: ", 90 - (m_PivotEncoder.getPosition() / Pivot.RotationsPerDegree));
     SmartDashboard.putNumber(
         "Absolute Encoder Pivot Degrees", m_PivotAbsoluteEncoder.getPosition() * 360);
     SmartDashboard.putNumber(
         "Adjusted Absolute Encoder Pivot Degrees",
-        (m_PivotAbsoluteEncoder.getPosition() - 0.25) * 360);
+        ((m_PivotAbsoluteEncoder.getPosition() - 0.25) * 360) - AngleAdjust);
 
     if ((shooterPivotP != Pivot.kP)) {
       m_PivotPIDController.setP(shooterPivotP);

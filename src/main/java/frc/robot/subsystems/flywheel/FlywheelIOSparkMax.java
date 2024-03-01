@@ -71,7 +71,8 @@ public class FlywheelIOSparkMax implements FlywheelIO {
 
   @Override
   public void setVoltage(double volts) {
-    leader.setVoltage(volts);
+    // leader.setVoltage(volts);
+    leader.set(volts);
   }
 
   @Override

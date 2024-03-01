@@ -5,26 +5,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 
-public class PivotMoveToPosition extends Command {
-  /** Creates a new PivotMoveToPosition. */
-  private PivotSubsystem m_PivotSubsystem;
+public class ClimberToPosition extends Command {
+  /** Creates a new ClimberToPosition. */
+  private ClimberSubsystem m_ClimberSubsystem;
 
-  private double m_PivotDegrees;
+  private double m_ClimberDegrees;
 
-  public PivotMoveToPosition(PivotSubsystem pivotSubs, double pivotDegrees) {
+  public ClimberToPosition(ClimberSubsystem climberSubs, double climberDegrees) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_PivotSubsystem = pivotSubs;
-    m_PivotDegrees = pivotDegrees;
-    addRequirements(m_PivotSubsystem);
+    m_ClimberSubsystem = climberSubs;
+    m_ClimberDegrees = climberDegrees;
+    addRequirements(m_ClimberSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_PivotSubsystem.MovePivotTo(m_PivotDegrees);
+    m_ClimberSubsystem.GoToAngle(m_ClimberDegrees);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,10 +37,7 @@ public class PivotMoveToPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(
-            (90 - (m_PivotSubsystem.pivotPos() / Constants.Pivot.RotationsPerDegree))
-                - m_PivotDegrees)
-        < 1) {
+    if (Math.abs((m_ClimberSubsystem.GetAngle()) - m_ClimberDegrees) < 1) {
       return true;
     }
 

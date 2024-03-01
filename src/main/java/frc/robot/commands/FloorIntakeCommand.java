@@ -15,6 +15,7 @@ public class FloorIntakeCommand extends Command {
   private ShooterIntakeSubsystem m_ShooterIntakeSubsystem;
   private PivotSubsystem m_PivotSubsystem;
   // private Joystick m_joystickManipulator;
+  private int wait = 0;
 
   public FloorIntakeCommand(
       IntakeSubsystem intakesub, ShooterIntakeSubsystem shootersub, PivotSubsystem PivotSub) {
@@ -31,18 +32,20 @@ public class FloorIntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_PivotSubsystem.IsShooterAligned()) {
-      m_IntakeSubsystem.in();
-      m_ShooterIntakeSubsystem.MoveShooterIntake(.5);
-    }
+    // if (m_PivotSubsystem.IsShooterAligned()) {
+    m_IntakeSubsystem.in();
+    m_ShooterIntakeSubsystem.MoveShooterIntake(.5);
+    wait = 0;
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if (m_IntakeSubsystem.getFloorBeans()) {
-    //  m_ShooterIntakeSubsystem.MoveShooterIntake(.5);
-    // }
+
+    if (!m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
+      wait++;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -52,12 +55,21 @@ public class FloorIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (!m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
+
+    if (wait >= 1) {
       m_IntakeSubsystem.stop();
       m_ShooterIntakeSubsystem.MoveShooterIntake(0);
-      //  m_ShooterSubsystem.IntakeStop();
       return true;
     }
+
+    /*
+        if (!m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
+          m_IntakeSubsystem.stop();
+          m_ShooterIntakeSubsystem.MoveShooterIntake(0);
+          return true;
+        }
+    */
+
     return false;
   }
 }

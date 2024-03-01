@@ -25,7 +25,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorMoveToPosition;
 import frc.robot.commands.FloorIntakeCommand;
+import frc.robot.commands.Pivot;
 import frc.robot.commands.PivotMoveToPosition;
+import frc.robot.commands.TakeShot;
+import frc.robot.commands.TakeShotFlyWheel;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -212,17 +215,17 @@ public class RobotContainer {
                     new TakeShot(
                         shooterIntakeSub,
                         flywheel))); // turns on shooter intake after all other components have
-    // reached their spot
+    // reached their spot*/
 
-    manipulator.a().onTrue(new ShooterAmpCommand(shooterSub, 10, 5));
-    /*  shooterSub.setDefaultCommand(
+    // manipulator.a().onTrue(new ShooterAmpCommand(shooterSub, 10, 5));
+    pivotSub.setDefaultCommand(
         Pivot.joystickControl(
-            shooterSub,
+            pivotSub,
             () ->
-                manipulator
+                -manipulator
                     .getRightY())); // gets from shooter subsystem setting up a default command that
     // is connected to the manipulators controlling
-    //was end of block comment*/
+    // was end of block comment
 
     controller
         .a()
@@ -230,14 +233,25 @@ public class RobotContainer {
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
 
+    controller.b().onTrue(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0));
+    controller
+        .y()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 37)
+                .andThen(new TakeShot(shooterIntakeSub, flywheel)));
+
     // Testing stiff starts here
     // manipulator.a().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
     // manipulator.b().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
-    manipulator.x().onTrue(new PivotMoveToPosition(pivotSub, 30));
+    manipulator.x().onTrue(new PivotMoveToPosition(pivotSub, 37));
     // manipulator.y().onTrue(new PivotMoveToPosition(pivotSub, 90));
     manipulator.b().onTrue(new PivotMoveToPosition(pivotSub, 90));
     manipulator.a().onTrue(new PivotMoveToPosition(pivotSub, 150));
-    manipulator.y().onTrue(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub));
+    manipulator
+        .y()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 60)
+                .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
 
     manipulator.leftBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
     // .alongWith(new PivotMoveToPosition(pivotSub, 30)));
