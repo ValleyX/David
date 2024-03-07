@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -28,7 +29,6 @@ import frc.robot.commands.FloorIntakeCommand;
 import frc.robot.commands.Pivot;
 import frc.robot.commands.PivotMoveToPosition;
 import frc.robot.commands.TakeShot;
-import frc.robot.commands.TakeShotFlyWheel;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -73,10 +73,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOSparkMax(0),
-                new ModuleIOSparkMax(1),
+                new ModuleIOSparkMax(3),
                 new ModuleIOSparkMax(2),
-                new ModuleIOSparkMax(3));
+                new ModuleIOSparkMax(1),
+                new ModuleIOSparkMax(0));
         // shooterSub = new ShooterSubsystem();
         flywheel = new Flywheel(new FlywheelIOSparkMax());
         elevatorSub = new ElevatorSubsystem();
@@ -129,14 +129,15 @@ public class RobotContainer {
         shooterIntakeSub = new ShooterIntakeSubsystem();
         break;
     }
-    /*
-        // Set up auto routines
-        NamedCommands.registerCommand(
-            "Run Flywheel",
-            Commands.startEnd(
-                    () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
-                .withTimeout(5.0));
-    */
+
+    // Set up auto routines
+    NamedCommands.registerCommand(
+        "Run Flywheel",
+        Commands.startEnd(
+                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
+            .withTimeout(5.0));
+
+    NamedCommands.registerCommand("stop", Commands.runOnce(drive::stopWithX, drive));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // autoChooser.addOption("test", elevatorSub.getDefaultCommand());
@@ -181,7 +182,7 @@ public class RobotContainer {
             drive,
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
-            () -> controller.getRightX()));
+            () -> -controller.getRightX()));
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     controller
         .b()
@@ -189,7 +190,7 @@ public class RobotContainer {
             Commands.runOnce(
                     () ->
                         drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d(Math.PI))),
                     drive)
                 .ignoringDisable(true));
 
@@ -233,7 +234,7 @@ public class RobotContainer {
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
 
-    controller.b().onTrue(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0));
+    // controller.b().onTrue(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0));
     controller
         .y()
         .onTrue(
@@ -274,5 +275,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
     // return elevatorSub.getCurrentCommand();
+  }
+
+  public void EnterTelop() {
+    drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d(Math.PI)));
   }
 }

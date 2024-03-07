@@ -140,11 +140,12 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnRelativeEncoder.setMeasurementPeriod(10);
     turnRelativeEncoder.setAverageDepth(2);
 
-    // driveSparkMax.setCANTimeout(0);
-    // turnSparkMax.setCANTimeout(0);
+    driveSparkMax.setCANTimeout(0);
+    turnSparkMax.setCANTimeout(0);
 
     driveSparkMax.burnFlash();
     turnSparkMax.burnFlash();
+    setDriveBrakeMode(true);
   }
 
   @Override

@@ -192,6 +192,7 @@ public final class Constants {
         kTurningEncoderPositionFactor; // radians
 
     public static final double kDrivingP = 0.04; // TODO have to tune Driving and turning PID
+    // public static final double kDrivingP = 0.004; // TODO have to tune Driving and turning PID
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;
@@ -307,9 +308,9 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPXController = .2;
+    public static final double kPYController = .2;
+    public static final double kPThetaController = .2;
   }
 
   public static final class NeoMotorConstants {
