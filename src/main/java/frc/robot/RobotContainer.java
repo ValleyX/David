@@ -28,7 +28,8 @@ import frc.robot.commands.ElevatorMoveToPosition;
 import frc.robot.commands.FloorIntakeCommand;
 import frc.robot.commands.Pivot;
 import frc.robot.commands.PivotMoveToPosition;
-import frc.robot.commands.TakeShot;
+import frc.robot.commands.TakeShotFlyWheel;
+import frc.robot.commands.flywheelRev;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -227,27 +228,54 @@ public class RobotContainer {
                     .getRightY())); // gets from shooter subsystem setting up a default command that
     // is connected to the manipulators controlling
     // was end of block comment
-
-    controller
-        .a()
-        .whileTrue(
-            Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-
+    /*
+        controller
+            .a()
+            .whileTrue(
+                Commands.startEnd(
+                    () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+    */
     // controller.b().onTrue(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0));
+    /*
     controller
         .y()
         .onTrue(
             new PivotMoveToPosition(pivotSub, 37)
                 .andThen(new TakeShot(shooterIntakeSub, flywheel)));
+                */
+
+    // podium
+    controller
+        .y()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 45)
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
+    /*
+        controller
+            .y()
+            .onTrue(
+                new PivotMoveToPosition(pivotSub, 30)
+                    .andThen(new ElevatorMoveToPosition(elevatorSub, 15))
+                    .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
+    */
+    // speaker
+    controller
+        .a()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 58)
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6))); // 3500
+
+    // start increasing RPM
+    controller.leftBumper().onTrue(new flywheelRev(flywheel, true, 3500));
+    controller.rightBumper().onTrue(new flywheelRev(flywheel, false, 0));
 
     // Testing stiff starts here
     // manipulator.a().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
     // manipulator.b().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
     manipulator.x().onTrue(new PivotMoveToPosition(pivotSub, 37));
     // manipulator.y().onTrue(new PivotMoveToPosition(pivotSub, 90));
-    manipulator.b().onTrue(new PivotMoveToPosition(pivotSub, 90));
-    manipulator.a().onTrue(new PivotMoveToPosition(pivotSub, 150));
+    manipulator.b().onTrue(new PivotMoveToPosition(pivotSub, 0));
+    manipulator.a().onTrue(new PivotMoveToPosition(pivotSub, -10));
     manipulator
         .y()
         .onTrue(
@@ -263,7 +291,7 @@ public class RobotContainer {
     manipulator
         .povDown()
         .onTrue(
-            new ElevatorMoveToPosition(elevatorSub, 60)
+            new ElevatorMoveToPosition(elevatorSub, 16)
                 .andThen(new PivotMoveToPosition(pivotSub, 60)));
   }
 
