@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,12 +18,15 @@ public class ClimberSubsystem extends SubsystemBase {
   private final CANSparkFlex m_LeftClimber;
   private final CANSparkFlex m_RightClimber;
 
+  private final SparkAbsoluteEncoder m_ClimberAbsoluteEncoder;
+
   // private final CANCoderJNI m_climberAngle;
 
   private final RelativeEncoder m_ClimberEncoder;
 
   private SparkPIDController m_ClimberPIDController;
   private SparkLimitSwitch climberDown;
+  private SparkLimitSwitch climberUp;
 
   /** Creates a new Climber. */
   public ClimberSubsystem() {
@@ -31,15 +35,12 @@ public class ClimberSubsystem extends SubsystemBase {
             RevCanIDs.kCAN_ClimberMotorLeft, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     m_RightClimber =
         new CANSparkFlex(
-            RevCanIDs.kCAN_ClimberMotorLeft, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+            RevCanIDs.kCAN_ClimberMotorRight,
+            com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     m_LeftClimber.restoreFactoryDefaults(); //
     m_RightClimber.restoreFactoryDefaults();
-    m_RightClimber.follow(m_LeftClimber); // makes the right motor follow what ever
-
-    // TODO Theses could be normally closed or open
-    // these are to tell the motor if you have hit the max or min(boolean) and the motor cuts off if
-    // so it doesn't break
-    climberDown = m_LeftClimber.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    m_RightClimber.setInverted(true); // inverts second motor
+    // m_RightClimber.follow(m_LeftClimber); // makes the right motor follow what ever
 
     m_ClimberEncoder = m_LeftClimber.getEncoder(); // TODO have to check later
     m_ClimberPIDController =
@@ -47,6 +48,19 @@ public class ClimberSubsystem extends SubsystemBase {
     m_ClimberPIDController.setFeedbackDevice(
         m_ClimberEncoder); // setting the encoder to feed back into the motor to make the motor
     // beable to go to specfic cordinates
+
+    // TODO Theses could be normally closed or open
+    // these are to tell the motor if you have hit the max or min(boolean) and the motor cuts off if
+    // so it doesn't break
+    climberDown = m_LeftClimber.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    climberUp = m_LeftClimber.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    // make absolute encoder
+    m_ClimberAbsoluteEncoder =
+        m_LeftClimber.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+
+    // sets position of absolute encoder
+    m_ClimberEncoder.setPosition(
+        Climber.RotationsPerDegree * (((m_ClimberAbsoluteEncoder.getPosition()) * 360)));
 
     // seting PID coeficients for climb motor
     m_ClimberPIDController.setP(Climber.kP);
@@ -67,6 +81,18 @@ public class ClimberSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Set Rotations", 0);
     SmartDashboard.putNumber("position", m_ClimberEncoder.getPosition());
   }
+
+  // moves climber to specific position
+  public void moveClimberTo(double positionFromBottomDeg) {
+    m_ClimberPIDController.setReference(
+        positionFromBottomDeg * Climber.RotationsPerDegree, ControlType.kPosition);
+  }
+
+  // returns position of climbers
+  public double climberPos() {
+    return m_ClimberEncoder.getPosition();
+  }
+
   /** Extends the climber motors */
   public void Extend() {
     m_LeftClimber.set(Climber.kUpSpeed);
@@ -109,6 +135,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public boolean IsDown() { // checks limit switch to see if climber is down
     return climberDown.isPressed();
+    // return false;
   }
 
   @Override
@@ -126,6 +153,8 @@ public class ClimberSubsystem extends SubsystemBase {
     double climberPivotMin =
         SmartDashboard.getNumber("climberPivot Min Output", Climber.kMinOutput);
     double climberPivotRotations = SmartDashboard.getNumber("climberPivot Set Rotations", 0);
+    SmartDashboard.putBoolean("switch Down settting", climberDown.isPressed());
+    SmartDashboard.putBoolean("switch Up settting", climberUp.isPressed());
 
     // making sure PID loop values match the smartboard values
     if ((climberPivotP != Climber.kP)) {
@@ -154,7 +183,7 @@ public class ClimberSubsystem extends SubsystemBase {
       climberPivotMin = Climber.kMinOutput;
     }
 
-    m_ClimberPIDController.setReference(
-        climberPivotRotations, ControlType.kPosition); // This makes the PID loop go
+    // m_ClimberPIDController.setReference(
+    //    climberPivotRotations, ControlType.kPosition); // This makes the PID loop go
   }
 }

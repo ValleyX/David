@@ -78,7 +78,7 @@ public class TakeShotFlyWheel extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() { // TODO: ADD LED HEADS UP FOR WHEN SHOT FAILS DUE TO LOW RPM
-    if ((waitCount > 15) || (m_timeOutCounter >= m_timeOut20Ms)) { // 15 is perfect!!!
+    if ((waitCount > 20) || (m_timeOutCounter >= m_timeOut20Ms)) { // 15 is perfect!!!
 
       // m_Flywheel.runVolts(0);
       // m_ShooterIntakeSubsystem.MoveShooterIntake(0);

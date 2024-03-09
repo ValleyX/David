@@ -17,12 +17,19 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.LightConstants;
+import frc.robot.Constants.PWMIDs;
+import frc.robot.commands.BlinkinControl;
+import frc.robot.commands.ClimberCommand;
+import frc.robot.commands.ClimberMoveToPosition;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorMoveToPosition;
 import frc.robot.commands.FloorIntakeCommand;
@@ -30,6 +37,7 @@ import frc.robot.commands.OutTake;
 import frc.robot.commands.PivotMoveToPosition;
 import frc.robot.commands.TakeShotFlyWheel;
 import frc.robot.commands.flywheelRev;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -47,6 +55,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
  */
 public class RobotContainer {
 
+  // BLINKINS :D
+  private PWM m_TowerBlinkin;
+  private PWM m_BaseBlinkin;
+
   // Subsystems
   private final Drive drive;
   // private final ShooterSubsystem shooterSub;
@@ -55,6 +67,7 @@ public class RobotContainer {
   private final PivotSubsystem pivotSub;
   private final ShooterIntakeSubsystem shooterIntakeSub;
   private final IntakeSubsystem intakeSub;
+  private final ClimberSubsystem climberSub;
   private boolean minorMode;
 
   // Controller
@@ -85,7 +98,10 @@ public class RobotContainer {
         pivotSub = new PivotSubsystem();
         shooterIntakeSub = new ShooterIntakeSubsystem();
         intakeSub = new IntakeSubsystem();
+        climberSub = new ClimberSubsystem();
         minorMode = false;
+        m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
+        m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
         /*
               drive =
                   new Drive(
@@ -113,6 +129,9 @@ public class RobotContainer {
         pivotSub = new PivotSubsystem();
         shooterIntakeSub = new ShooterIntakeSubsystem();
         intakeSub = new IntakeSubsystem();
+        climberSub = new ClimberSubsystem();
+        m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
+        m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
         break;
 
       default:
@@ -130,26 +149,25 @@ public class RobotContainer {
         pivotSub = new PivotSubsystem();
         intakeSub = new IntakeSubsystem();
         shooterIntakeSub = new ShooterIntakeSubsystem();
+        climberSub = new ClimberSubsystem();
+        m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
+        m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
         break;
     }
 
     // Set up auto routines
-    NamedCommands.registerCommand(
-        "Run Flywheel",
-        Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
-            .withTimeout(5.0));
+    NamedCommands.registerCommand("Run Flywheel", new flywheelRev(flywheel, true, 3500));
 
     NamedCommands.registerCommand("stop", Commands.runOnce(drive::stopWithX, drive));
 
     NamedCommands.registerCommand(
         "NonCentered Auto Shot",
         new PivotMoveToPosition(pivotSub, 45)
-            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0, 6)));
 
     NamedCommands.registerCommand(
         "Subwoofer Auto Shot",
-        new PivotMoveToPosition(pivotSub, 58)
+        new PivotMoveToPosition(pivotSub, 60)
             .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6)));
 
     NamedCommands.registerCommand(
@@ -215,11 +233,17 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
-                () -> -driver.getLeftY() / 2,
-                () -> -driver.getLeftX() / 2,
-                () -> -driver.getRightX() / 2)
+                () -> -driver.getLeftY() / 3,
+                () -> -driver.getLeftX() / 3,
+                () -> -driver.getRightX() / 3)
             // divinding by 4 so it goes quarter speed :D
             );
+
+    // blinkin Tests
+    driver
+        .y()
+        .onTrue(new BlinkinControl(m_BaseBlinkin, LightConstants.kGold))
+        .onFalse(new BlinkinControl(m_BaseBlinkin, LightConstants.kViolet));
 
     // intake control: intake
     manip
@@ -291,6 +315,13 @@ public class RobotContainer {
     // flywheel: cancel rev
     manip.leftBumper().onTrue(new flywheelRev(flywheel, false, 0));
 
+    // runs lift off stick
+    climberSub.setDefaultCommand(
+        ClimberCommand.joystickControl(climberSub, () -> -manip.getRightY()));
+
+    // moves climber to set pos in degrees
+    manip.povUp().onTrue(new ClimberMoveToPosition(climberSub, 75));
+
     // manip.x().onTrue(new PivotMoveToPosition(pivotSub, 37));
     // manip.b().onTrue(new PivotMoveToPosition(pivotSub, 0));
     // manip.a().onTrue(new PivotMoveToPosition(pivotSub, -10));
@@ -322,5 +353,12 @@ public class RobotContainer {
 
   public void EnterTelop() {
     drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d(Math.PI)));
+  }
+
+  // sets wheels to coast
+  public void setCoast() {
+    drive.runVelocity(new ChassisSpeeds(0.01, 0, 0));
+    drive.stop();
+    drive.setDriveBrakeMode(false);
   }
 }

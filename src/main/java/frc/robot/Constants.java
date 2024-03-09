@@ -87,6 +87,18 @@ public final class Constants {
         6; // it will not properly intake before touched*/
   }
 
+  public static final class LightConstants {
+    // Look @ Table 5 in this link (https://www.revrobotics.com/content/docs/REV-11-1105-UM.pdf) for
+    // color options!***********
+    public static final double kViolet = 0.91;
+    public static final double kGold = 0.67;
+    public static final double kStrobeRed = -0.11;
+    public static final double kBreathBlue = -0.15;
+    public static final double kStrobeGold = -0.07; // indicating cone
+    public static final double kStrobeBlue = -0.09; // indicating cube
+    public static final double kJosh = 0.93; // color white
+  }
+
   public static final class ShooterConstants {
 
     public static final double shooterSpeed = 0.5;
@@ -266,9 +278,9 @@ public final class Constants {
         (gearReduction) / (gearDiameterIn * Math.PI);
 
     // Climber Pivot PID
-    public static final double kP = 0.1; // TODO have to tune Climber PID
-    public static final double kI = 0.0001;
-    public static final double kD = 1;
+    public static final double kP = 0.5; // TODO have to tune Climber PID
+    public static final double kI = 0;
+    public static final double kD = 0;
     public static final double kIz = 0;
     public static final double kFF = 0;
     public static final double kMaxOutput = 1;
@@ -290,16 +302,6 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
     public static final int KManipulatorControllerPort = 1;
-  }
-
-  public static final class LightConstants {
-    public static final double kViolet = 0.91;
-    public static final double kGold = 0.67;
-    public static final double kStrobeRed = -0.11;
-    public static final double kBreathBlue = -0.15;
-    public static final double kStrobeGold = -0.07; // indicating cone
-    public static final double kStrobeBlue = -0.09; // indicating cube
-    public static final double kJosh = 0.93; // color white
   }
 
   public static final class AutoConstants {

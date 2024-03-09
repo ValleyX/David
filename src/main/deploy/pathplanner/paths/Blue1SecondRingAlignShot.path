@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.38,
-        "y": 6.9872307017341315
+        "x": 3.2513912300551873,
+        "y": 5.559932574410603
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5610640312189714,
-        "y": 6.99655944766435
+        "x": 2.6636802364513823,
+        "y": 5.569261320340823
       },
       "isLocked": false,
-      "linkedName": "Blue1Start EndPoint"
+      "linkedName": "Blue1SecondRingIntake EndPos"
     },
     {
       "anchor": {
-        "x": 3.0648163114508047,
-        "y": 6.9872307017341315
+        "x": 1.9080518161036322,
+        "y": 5.559932574410603
       },
       "prevControl": {
-        "x": 2.850255155055765,
-        "y": 6.977901955803912
+        "x": 1.898723070173413,
+        "y": 5.550603828480384
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blue1Pickup EndPoint"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

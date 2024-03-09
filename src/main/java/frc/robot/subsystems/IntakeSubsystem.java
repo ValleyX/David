@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
@@ -16,8 +15,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final TalonSRX m_floorIntakeMotor;
   private final DigitalInput m_floorBeans;
-  private PWM m_TowerBlinkin;
-  private PWM m_BaseBlinkin;
 
   public IntakeSubsystem() {
 
@@ -25,9 +22,6 @@ public class IntakeSubsystem extends SubsystemBase {
     m_floorBeans = new DigitalInput(DigitalInputIDs.kDIG_FloorBeamBreak);
     SmartDashboard.putBoolean("floor Beam Break", m_floorBeans.get());
     m_floorIntakeMotor.setInverted(true);
-
-    m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
-    m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
   }
 
   /** Turns on the intake motor to intake in */

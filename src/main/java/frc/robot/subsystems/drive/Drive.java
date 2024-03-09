@@ -281,4 +281,11 @@ public class Drive extends SubsystemBase {
       new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
     };
   }
+
+  // makes it so setting it to test mode sets it from brake to coast mode
+  public void setDriveBrakeMode(boolean enable) {
+    for (int i = 0; i < 4; i++) {
+      modules[i].setBrakeMode(enable);
+    }
+  }
 }
