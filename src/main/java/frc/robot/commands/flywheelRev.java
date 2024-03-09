@@ -20,6 +20,8 @@ public class flywheelRev extends Command {
     m_flywheel = flywheel;
     m_enable = enable;
     m_targetRPM = targetRPM;
+
+    addRequirements(flywheel);
   }
 
   // Called when the command is initially scheduled.

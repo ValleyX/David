@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorMoveToPosition;
 import frc.robot.commands.FloorIntakeCommand;
-import frc.robot.commands.Pivot;
+import frc.robot.commands.OutTake;
 import frc.robot.commands.PivotMoveToPosition;
 import frc.robot.commands.TakeShotFlyWheel;
 import frc.robot.commands.flywheelRev;
@@ -55,10 +55,11 @@ public class RobotContainer {
   private final PivotSubsystem pivotSub;
   private final ShooterIntakeSubsystem shooterIntakeSub;
   private final IntakeSubsystem intakeSub;
+  private boolean minorMode;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandXboxController manipulator = new CommandXboxController(1);
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController manip = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -84,6 +85,7 @@ public class RobotContainer {
         pivotSub = new PivotSubsystem();
         shooterIntakeSub = new ShooterIntakeSubsystem();
         intakeSub = new IntakeSubsystem();
+        minorMode = false;
         /*
               drive =
                   new Drive(
@@ -140,6 +142,21 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("stop", Commands.runOnce(drive::stopWithX, drive));
 
+    NamedCommands.registerCommand(
+        "NonCentered Auto Shot",
+        new PivotMoveToPosition(pivotSub, 45)
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
+
+    NamedCommands.registerCommand(
+        "Subwoofer Auto Shot",
+        new PivotMoveToPosition(pivotSub, 58)
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6)));
+
+    NamedCommands.registerCommand(
+        "Activate Intake",
+        new PivotMoveToPosition(pivotSub, 60)
+            .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
+
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // autoChooser.addOption("test", elevatorSub.getDefaultCommand());
 
@@ -180,12 +197,9 @@ public class RobotContainer {
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+    driver.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driver
         .b()
         .onTrue(
             Commands.runOnce(
@@ -195,104 +209,105 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // elevatorSub.setDefaultCommand(
-    //   ElevatorCommand.joystickControl(elevatorSub, () -> manipulator.getLeftY()));
-    /*  PivotandElevator.joystickControl(
-            shooterSub, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
+    // MINOR MODE OH YEAHHH
+    driver
+        .leftTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driver.getLeftY() / 2,
+                () -> -driver.getLeftX() / 2,
+                () -> -driver.getRightX() / 2)
+            // divinding by 4 so it goes quarter speed :D
+            );
 
-    manipulator
-        .b()
-        .onTrue( // while b is pressed on manipulator controller; TODO whole sequence needs to be
-            // tested
-            new ElevatorMoveToPosition(elevatorSub, 10) // moves elavator up to a position
-                .alongWith(
-                    new PivotMoveToPosition(
-                        pivotSub, 5)) // moves pivot to needed position in parrallel with elevator
-                .alongWith(
-                    new ShooterRampUpVelocity(
-                        flywheel,
-                        6000)) // starts ramping up velocity in parrelell with the pivot and
-                // elevator
-                .andThen(
-                    new TakeShot(
-                        shooterIntakeSub,
-                        flywheel))); // turns on shooter intake after all other components have
-    // reached their spot*/
-
-    // manipulator.a().onTrue(new ShooterAmpCommand(shooterSub, 10, 5));
-    pivotSub.setDefaultCommand(
-        Pivot.joystickControl(
-            pivotSub,
-            () ->
-                -manipulator
-                    .getRightY())); // gets from shooter subsystem setting up a default command that
-    // is connected to the manipulators controlling
-    // was end of block comment
-    /*
-        controller
-            .a()
-            .whileTrue(
-                Commands.startEnd(
-                    () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-    */
-    // controller.b().onTrue(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0));
-    /*
-    controller
-        .y()
-        .onTrue(
-            new PivotMoveToPosition(pivotSub, 37)
-                .andThen(new TakeShot(shooterIntakeSub, flywheel)));
-                */
-
-    // podium
-    controller
-        .y()
-        .onTrue(
-            new PivotMoveToPosition(pivotSub, 45)
-                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
-    /*
-        controller
-            .y()
-            .onTrue(
-                new PivotMoveToPosition(pivotSub, 30)
-                    .andThen(new ElevatorMoveToPosition(elevatorSub, 15))
-                    .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
-    */
-    // speaker
-    controller
-        .a()
-        .onTrue(
-            new PivotMoveToPosition(pivotSub, 58)
-                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6))); // 3500
-
-    // start increasing RPM
-    controller.leftBumper().onTrue(new flywheelRev(flywheel, true, 3500));
-    controller.rightBumper().onTrue(new flywheelRev(flywheel, false, 0));
-
-    // Testing stiff starts here
-    // manipulator.a().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
-    // manipulator.b().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
-    manipulator.x().onTrue(new PivotMoveToPosition(pivotSub, 37));
-    // manipulator.y().onTrue(new PivotMoveToPosition(pivotSub, 90));
-    manipulator.b().onTrue(new PivotMoveToPosition(pivotSub, 0));
-    manipulator.a().onTrue(new PivotMoveToPosition(pivotSub, -10));
-    manipulator
-        .y()
+    // intake control: intake
+    manip
+        .leftTrigger()
         .onTrue(
             new PivotMoveToPosition(pivotSub, 60)
                 .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
 
-    manipulator.leftBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
-    // .alongWith(new PivotMoveToPosition(pivotSub, 30)));
-    manipulator.rightBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 10));
-    // .alongWith(new PivotMoveToPosition(pivotSub, 40)));
-    manipulator.povUp().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
-    // .andThen(new PivotMoveToPosition(pivotSub, 50)));
-    manipulator
-        .povDown()
+    // intake control: intake cancel
+    manip
+        .rightTrigger()
+        .whileTrue(
+            new PivotMoveToPosition(pivotSub, 60)
+                .andThen(new OutTake(intakeSub, shooterIntakeSub, pivotSub)));
+
+    // shooter: auto not button button thingy tester ig :)
+    manip
+        .povUp()
         .onTrue(
-            new ElevatorMoveToPosition(elevatorSub, 16)
+            new PivotMoveToPosition(pivotSub, 45)
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
+
+    // shooter: speaker shot
+    manip
+        .a()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 58)
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6)));
+
+    // shooter: amp shot TODO: NEEDS TUNE + LOWER, MAKE ROUTINE
+    manip
+        .b()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, -55)
+                .alongWith(new ElevatorMoveToPosition(elevatorSub, 9.5))
+                .alongWith(new flywheelRev(flywheel, true, 3000))
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3000, 6))
+                .andThen(new ElevatorMoveToPosition(elevatorSub, 0))
                 .andThen(new PivotMoveToPosition(pivotSub, 60)));
+
+    // shooter: white line shot
+    manip
+        .y()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 40)
+                .alongWith(new ElevatorMoveToPosition(elevatorSub, 15))
+                .alongWith(new flywheelRev(flywheel, true, 5000))
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5000, 6))
+                .andThen(new ElevatorMoveToPosition(elevatorSub, 0))
+                .andThen(new PivotMoveToPosition(pivotSub, 60)));
+
+    // lift: reset lift
+    manip
+        .povLeft()
+        .onTrue(
+            new ElevatorMoveToPosition(elevatorSub, 0)
+                .andThen(new PivotMoveToPosition(pivotSub, 60)));
+
+    // intake: outtake
+    manip
+        .povDown()
+        .whileTrue(
+            new PivotMoveToPosition(pivotSub, 60)
+                .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
+
+    // flywheel: rev
+    manip.rightBumper().onTrue(new flywheelRev(flywheel, true, 3500));
+
+    // flywheel: cancel rev
+    manip.leftBumper().onTrue(new flywheelRev(flywheel, false, 0));
+
+    // manip.x().onTrue(new PivotMoveToPosition(pivotSub, 37));
+    // manip.b().onTrue(new PivotMoveToPosition(pivotSub, 0));
+    // manip.a().onTrue(new PivotMoveToPosition(pivotSub, -10));
+    // manip
+    //     .y()
+    //     .onTrue(
+    //         new PivotMoveToPosition(pivotSub, 60)
+    //             .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
+
+    // manip.leftBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 5));
+    // manip.rightBumper().onTrue(new ElevatorMoveToPosition(elevatorSub, 10));
+    // manip.povUp().onTrue(new ElevatorMoveToPosition(elevatorSub, 0));
+    // manip
+    //     .povDown()
+    //     .onTrue(
+    //         new ElevatorMoveToPosition(elevatorSub, 16)
+    //             .andThen(new PivotMoveToPosition(pivotSub, 60)));
   }
 
   /**

@@ -9,15 +9,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterIntakeSubsystem;
 
-public class FloorIntakeCommand extends Command {
-
+public class OutTake extends Command {
   private IntakeSubsystem m_IntakeSubsystem;
   private ShooterIntakeSubsystem m_ShooterIntakeSubsystem;
   private PivotSubsystem m_PivotSubsystem;
   // private Joystick m_joystickManipulator;
   private int wait = 0;
 
-  public FloorIntakeCommand(
+  public OutTake(
       IntakeSubsystem intakesub, ShooterIntakeSubsystem shootersub, PivotSubsystem PivotSub) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_IntakeSubsystem = intakesub;
@@ -33,8 +32,8 @@ public class FloorIntakeCommand extends Command {
   @Override
   public void initialize() {
 
-    m_IntakeSubsystem.in();
-    m_ShooterIntakeSubsystem.MoveShooterIntake(.3);
+    m_IntakeSubsystem.out();
+    m_ShooterIntakeSubsystem.MoveShooterIntake(-.4);
     wait = 0;
   }
 
@@ -52,11 +51,6 @@ public class FloorIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
-    if (!m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
-
-      return true;
-    }
 
     return false;
   }
