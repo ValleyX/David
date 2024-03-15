@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
@@ -25,8 +26,8 @@ public class ClimberSubsystem extends SubsystemBase {
   private final RelativeEncoder m_ClimberEncoder;
 
   private SparkPIDController m_ClimberPIDController;
+  // private SparkLimitSwitch climberDown;
   private SparkLimitSwitch climberDown;
-  private SparkLimitSwitch climberUp;
 
   /** Creates a new Climber. */
   public ClimberSubsystem() {
@@ -39,8 +40,9 @@ public class ClimberSubsystem extends SubsystemBase {
             com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     m_LeftClimber.restoreFactoryDefaults(); //
     m_RightClimber.restoreFactoryDefaults();
-    m_RightClimber.setInverted(true); // inverts second motor
-    // m_RightClimber.follow(m_LeftClimber); // makes the right motor follow what ever
+
+    m_RightClimber.follow(m_LeftClimber, true); // makes the right motor follow what ever
+    // m_RightClimber.setInverted(true); // inverts second motor
 
     m_ClimberEncoder = m_LeftClimber.getEncoder(); // TODO have to check later
     m_ClimberPIDController =
@@ -52,8 +54,14 @@ public class ClimberSubsystem extends SubsystemBase {
     // TODO Theses could be normally closed or open
     // these are to tell the motor if you have hit the max or min(boolean) and the motor cuts off if
     // so it doesn't break
-    climberDown = m_LeftClimber.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
-    climberUp = m_LeftClimber.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    // climberDown = m_LeftClimber.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+    climberDown = m_LeftClimber.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+
+    climberDown.enableLimitSwitch(false);
+
+    m_LeftClimber.setIdleMode(IdleMode.kBrake);
+    m_RightClimber.setIdleMode(IdleMode.kBrake);
+
     // make absolute encoder
     m_ClimberAbsoluteEncoder =
         m_LeftClimber.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -134,8 +142,8 @@ public class ClimberSubsystem extends SubsystemBase {
    * @returns boolean
    */
   public boolean IsDown() { // checks limit switch to see if climber is down
-    return climberDown.isPressed();
-    // return false;
+    // return climberDown.isPressed();
+    return false;
   }
 
   @Override
@@ -153,8 +161,8 @@ public class ClimberSubsystem extends SubsystemBase {
     double climberPivotMin =
         SmartDashboard.getNumber("climberPivot Min Output", Climber.kMinOutput);
     double climberPivotRotations = SmartDashboard.getNumber("climberPivot Set Rotations", 0);
-    SmartDashboard.putBoolean("switch Down settting", climberDown.isPressed());
-    SmartDashboard.putBoolean("switch Up settting", climberUp.isPressed());
+    // SmartDashboard.putBoolean("switch Down settting", climberDown.isPressed());
+    SmartDashboard.putBoolean("switch Up settting", climberDown.isPressed());
 
     // making sure PID loop values match the smartboard values
     if ((climberPivotP != Climber.kP)) {

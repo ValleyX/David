@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.178585448079987,
-        "y": 5.559932574410603
+        "x": 2.8968988847068604,
+        "y": 7.015216939524788
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8782413928464217,
-        "y": 5.569261320340823
+        "x": 3.5965548294732947,
+        "y": 7.024545685455008
       },
       "isLocked": false,
       "linkedName": "Blue1SecondRingRepos EndPoint"

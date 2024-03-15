@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.76,
-        "y": 6.51
+        "x": 0.7512873207564597,
+        "y": 6.6140808645253655
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.8439290848791268,
-        "y": 7.023085873582517
+        "x": 0.8352164056355864,
+        "y": 7.127166738107882
       },
       "isLocked": false,
       "linkedName": "Blue1Start StartPoint"
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": "Blue1Auto",
   "previewStartingState": {
-    "rotation": -122.47119229084855,
+    "rotation": -120.52970589993404,
     "velocity": 0
   },
   "useDefaultConstraints": true

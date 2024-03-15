@@ -19,14 +19,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.LightConstants;
-import frc.robot.Constants.PWMIDs;
 import frc.robot.commands.BlinkinControl;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.ClimberMoveToPosition;
@@ -37,6 +36,8 @@ import frc.robot.commands.OutTake;
 import frc.robot.commands.PivotMoveToPosition;
 import frc.robot.commands.TakeShotFlyWheel;
 import frc.robot.commands.flywheelRev;
+import frc.robot.commands.flywheelRevUp;
+import frc.robot.subsystems.BlinkinSub;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -56,8 +57,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
 
   // BLINKINS :D
-  private PWM m_TowerBlinkin;
-  private PWM m_BaseBlinkin;
+  private BlinkinSub m_TowerBlinkin;
+  private BlinkinSub m_BaseBlinkin;
 
   // Subsystems
   private final Drive drive;
@@ -69,6 +70,8 @@ public class RobotContainer {
   private final IntakeSubsystem intakeSub;
   private final ClimberSubsystem climberSub;
   private boolean minorMode;
+
+  private int counter = 0;
 
   // Controller
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -100,8 +103,8 @@ public class RobotContainer {
         intakeSub = new IntakeSubsystem();
         climberSub = new ClimberSubsystem();
         minorMode = false;
-        m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
-        m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
+        m_TowerBlinkin = new BlinkinSub(Constants.PWMIDs.kPWM_TowerBlinkin);
+        m_BaseBlinkin = new BlinkinSub(Constants.PWMIDs.kPWM_BaseBlinkin);
         /*
               drive =
                   new Drive(
@@ -130,8 +133,8 @@ public class RobotContainer {
         shooterIntakeSub = new ShooterIntakeSubsystem();
         intakeSub = new IntakeSubsystem();
         climberSub = new ClimberSubsystem();
-        m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
-        m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
+        m_TowerBlinkin = new BlinkinSub(Constants.PWMIDs.kPWM_TowerBlinkin);
+        m_BaseBlinkin = new BlinkinSub(Constants.PWMIDs.kPWM_BaseBlinkin);
         break;
 
       default:
@@ -150,8 +153,8 @@ public class RobotContainer {
         intakeSub = new IntakeSubsystem();
         shooterIntakeSub = new ShooterIntakeSubsystem();
         climberSub = new ClimberSubsystem();
-        m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
-        m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
+        m_TowerBlinkin = new BlinkinSub(Constants.PWMIDs.kPWM_TowerBlinkin);
+        m_BaseBlinkin = new BlinkinSub(Constants.PWMIDs.kPWM_BaseBlinkin);
         break;
     }
 
@@ -229,13 +232,13 @@ public class RobotContainer {
 
     // MINOR MODE OH YEAHHH
     driver
-        .leftTrigger()
+        .rightBumper()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
-                () -> -driver.getLeftY() / 3,
-                () -> -driver.getLeftX() / 3,
-                () -> -driver.getRightX() / 3)
+                () -> -driver.getLeftY() / 2.5,
+                () -> -driver.getLeftX() / 2.5,
+                () -> -driver.getRightX() / 2.5)
             // divinding by 4 so it goes quarter speed :D
             );
 
@@ -243,7 +246,7 @@ public class RobotContainer {
     driver
         .y()
         .onTrue(new BlinkinControl(m_BaseBlinkin, LightConstants.kGold))
-        .onFalse(new BlinkinControl(m_BaseBlinkin, LightConstants.kViolet));
+        .onFalse(new BlinkinControl(m_BaseBlinkin, LightConstants.kBreathBlue));
 
     // intake control: intake
     manip
@@ -273,7 +276,7 @@ public class RobotContainer {
             new PivotMoveToPosition(pivotSub, 58)
                 .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6)));
 
-    // shooter: amp shot TODO: NEEDS TUNE + LOWER, MAKE ROUTINE
+    // shooter: amp shot
     manip
         .b()
         .onTrue(
@@ -310,7 +313,7 @@ public class RobotContainer {
                 .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
 
     // flywheel: rev
-    manip.rightBumper().onTrue(new flywheelRev(flywheel, true, 3500));
+    manip.rightBumper().whileTrue(new flywheelRevUp(flywheel, true, 3500));
 
     // flywheel: cancel rev
     manip.leftBumper().onTrue(new flywheelRev(flywheel, false, 0));
@@ -322,7 +325,7 @@ public class RobotContainer {
     // moves climber to set pos in degrees
     manip.povUp().onTrue(new ClimberMoveToPosition(climberSub, 75));
 
-    // manip.x().onTrue(new PivotMoveToPosition(pivotSub, 37));
+    manip.x().onTrue(new ElevatorMoveToPosition(elevatorSub, 15));
     // manip.b().onTrue(new PivotMoveToPosition(pivotSub, 0));
     // manip.a().onTrue(new PivotMoveToPosition(pivotSub, -10));
     // manip
@@ -360,5 +363,10 @@ public class RobotContainer {
     drive.runVelocity(new ChassisSpeeds(0.01, 0, 0));
     drive.stop();
     drive.setDriveBrakeMode(false);
+  }
+
+  public void teleopCounter() {
+    counter++;
+    SmartDashboard.putNumber("TeleOp Counter: ", counter);
   }
 }

@@ -3,29 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4602720114531138,
-        "y": 6.8006557831297485
+        "x": 0.7419585748262406,
+        "y": 6.57676588080449
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0759692428442937,
-        "y": 6.306232248828134
+        "x": 1.7419585748262407,
+        "y": 6.57676588080449
       },
       "isLocked": false,
-      "linkedName": "Blue1Reposition EndPoint"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8968988847068604,
-        "y": 7.015216939524788
+        "x": 4.492114438774332,
+        "y": 6.931258226152816
       },
       "prevControl": {
-        "x": 2.0199967672662624,
-        "y": 7.024545685455008
+        "x": 3.49630494325419,
+        "y": 6.839806333707089
+      },
+      "nextControl": {
+        "x": 5.406331539935807,
+        "y": 7.015216939524788
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.298242778303738,
+        "y": 7.435010506384649
+      },
+      "prevControl": {
+        "x": 6.842958413189553,
+        "y": 7.444339252314869
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blue1SecondRingRepos EndPoint"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -39,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -178.56790381583548,
-    "rotateFast": false
+    "rotation": -178.38646106711886,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Blue1Auto",
   "previewStartingState": {
-    "rotation": -125.1341930574151,
+    "rotation": -121.60750224624891,
     "velocity": 0
   },
   "useDefaultConstraints": true

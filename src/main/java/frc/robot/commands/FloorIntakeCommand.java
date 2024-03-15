@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -17,6 +18,9 @@ public class FloorIntakeCommand extends Command {
   // private Joystick m_joystickManipulator;
   private int wait = 0;
 
+  private PWM m_TowerBlinkin;
+  private PWM m_BaseBlinkin;
+
   public FloorIntakeCommand(
       IntakeSubsystem intakesub, ShooterIntakeSubsystem shootersub, PivotSubsystem PivotSub) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,6 +31,9 @@ public class FloorIntakeCommand extends Command {
     addRequirements(m_IntakeSubsystem);
     addRequirements(m_ShooterIntakeSubsystem);
     addRequirements(m_PivotSubsystem);
+
+    // m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
+    // m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
   }
 
   // Called when the command is initially scheduled.
@@ -55,8 +62,16 @@ public class FloorIntakeCommand extends Command {
 
     if (!m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
 
+      // sets LEDs to gold when there is a ring in the thing
+      // new BlinkinControl(m_BaseBlinkin, LightConstants.kGold);
+      // new BlinkinControl(m_TowerBlinkin, LightConstants.kGold);
+
       return true;
     }
+
+    // sets LEDs to gold when there is a ring in the thing
+    // new BlinkinControl(m_BaseBlinkin, LightConstants.kBreathBlue);
+    // new BlinkinControl(m_TowerBlinkin, LightConstants.kBreathBlue);
 
     return false;
   }

@@ -16,41 +16,35 @@
     },
     {
       "anchor": {
-        "x": 2.859583900985984,
-        "y": 6.212944789525943
+        "x": 2.868912646916203,
+        "y": 6.268917265107257
       },
       "prevControl": {
-        "x": 2.206571685870644,
-        "y": 6.203616043595724
+        "x": 2.2998591451728356,
+        "y": 6.212944789525943
       },
       "nextControl": {
-        "x": 5.09155957009504,
-        "y": 6.2448301562275
+        "x": 5.090395701202806,
+        "y": 6.487423795037086
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.430669406793358,
-        "y": 7.416353014524211
+        "x": 8.578105156210313,
+        "y": 7.640242916849471
       },
       "prevControl": {
-        "x": 6.395178608539035,
-        "y": 6.99655944766435
+        "x": 5.2477428591220825,
+        "y": 7.369709284873116
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Drive to Center EndPoint"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -62,7 +56,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 180.0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "BlueAutoGoFar",
