@@ -29,6 +29,7 @@ import frc.robot.Constants.LightConstants;
 import frc.robot.commands.BlinkinControl;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.ClimberMoveToPosition;
+import frc.robot.commands.ClimberReset;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorMoveToPosition;
 import frc.robot.commands.FloorIntakeCommand;
@@ -94,7 +95,9 @@ public class RobotContainer {
                 new ModuleIOSparkMax(3),
                 new ModuleIOSparkMax(2),
                 new ModuleIOSparkMax(1),
-                new ModuleIOSparkMax(0));
+                new ModuleIOSparkFlexFx(0)
+                // new ModuleIOSparkMax(0)
+                );
         // shooterSub = new ShooterSubsystem();
         flywheel = new Flywheel(new FlywheelIOSparkMax());
         elevatorSub = new ElevatorSubsystem();
@@ -166,17 +169,19 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "NonCentered Auto Shot",
         new PivotMoveToPosition(pivotSub, 45)
-            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0, 6)));
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0, 6, m_TowerBlinkin)));
 
     NamedCommands.registerCommand(
         "Subwoofer Auto Shot",
         new PivotMoveToPosition(pivotSub, 60)
-            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6)));
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6, m_TowerBlinkin)));
 
     NamedCommands.registerCommand(
         "Activate Intake",
         new PivotMoveToPosition(pivotSub, 60)
-            .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
+            .andThen(
+                new FloorIntakeCommand(
+                    intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // autoChooser.addOption("test", elevatorSub.getDefaultCommand());
@@ -246,35 +251,33 @@ public class RobotContainer {
     driver
         .y()
         .onTrue(new BlinkinControl(m_BaseBlinkin, LightConstants.kGold))
-        .onFalse(new BlinkinControl(m_BaseBlinkin, LightConstants.kBreathBlue));
+        .onTrue(new BlinkinControl(m_TowerBlinkin, LightConstants.kGold))
+        .onFalse(new BlinkinControl(m_BaseBlinkin, LightConstants.kBreathBlue))
+        .onFalse(new BlinkinControl(m_TowerBlinkin, LightConstants.kBreathBlue));
 
     // intake control: intake
     manip
         .leftTrigger()
         .onTrue(
             new PivotMoveToPosition(pivotSub, 60)
-                .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
+                .andThen(
+                    new FloorIntakeCommand(
+                        intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
 
-    // intake control: intake cancel
+    // intake control: outtake
     manip
         .rightTrigger()
         .whileTrue(
             new PivotMoveToPosition(pivotSub, 60)
                 .andThen(new OutTake(intakeSub, shooterIntakeSub, pivotSub)));
 
-    // shooter: auto not button button thingy tester ig :)
-    manip
-        .povUp()
-        .onTrue(
-            new PivotMoveToPosition(pivotSub, 45)
-                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 6000.0, 6)));
-
     // shooter: speaker shot
     manip
         .a()
         .onTrue(
             new PivotMoveToPosition(pivotSub, 58)
-                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6)));
+                .andThen(
+                    new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6, m_TowerBlinkin)));
 
     // shooter: amp shot
     manip
@@ -283,7 +286,7 @@ public class RobotContainer {
             new PivotMoveToPosition(pivotSub, -55)
                 .alongWith(new ElevatorMoveToPosition(elevatorSub, 9.5))
                 .alongWith(new flywheelRev(flywheel, true, 3000))
-                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3000, 6))
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3000, 6, m_TowerBlinkin))
                 .andThen(new ElevatorMoveToPosition(elevatorSub, 0))
                 .andThen(new PivotMoveToPosition(pivotSub, 60)));
 
@@ -294,7 +297,7 @@ public class RobotContainer {
             new PivotMoveToPosition(pivotSub, 40)
                 .alongWith(new ElevatorMoveToPosition(elevatorSub, 15))
                 .alongWith(new flywheelRev(flywheel, true, 5000))
-                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5000, 6))
+                .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5000, 6, m_TowerBlinkin))
                 .andThen(new ElevatorMoveToPosition(elevatorSub, 0))
                 .andThen(new PivotMoveToPosition(pivotSub, 60)));
 
@@ -302,15 +305,19 @@ public class RobotContainer {
     manip
         .povLeft()
         .onTrue(
-            new ElevatorMoveToPosition(elevatorSub, 0)
-                .andThen(new PivotMoveToPosition(pivotSub, 60)));
+            new PivotMoveToPosition(pivotSub, 40)
+                .andThen(
+                    new ElevatorMoveToPosition(elevatorSub, 0)
+                        .andThen(new PivotMoveToPosition(pivotSub, 60))));
 
-    // intake: outtake
+    // intake: cancel/manual
     manip
-        .povDown()
+        .povRight()
         .whileTrue(
             new PivotMoveToPosition(pivotSub, 60)
-                .andThen(new FloorIntakeCommand(intakeSub, shooterIntakeSub, pivotSub)));
+                .andThen(
+                    new FloorIntakeCommand(
+                        intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
 
     // flywheel: rev
     manip.rightBumper().whileTrue(new flywheelRevUp(flywheel, true, 3500));
@@ -323,9 +330,18 @@ public class RobotContainer {
         ClimberCommand.joystickControl(climberSub, () -> -manip.getRightY()));
 
     // moves climber to set pos in degrees
-    manip.povUp().onTrue(new ClimberMoveToPosition(climberSub, 75));
+    manip.povUp().onTrue(new ClimberMoveToPosition(climberSub, 20));
 
-    manip.x().onTrue(new ElevatorMoveToPosition(elevatorSub, 15));
+    // reset climber to 0
+    manip.povDown().onTrue(new ClimberReset(climberSub));
+
+    manip
+        .x()
+        .onTrue(
+            new PivotMoveToPosition(pivotSub, 40)
+                .andThen(
+                    new ElevatorMoveToPosition(elevatorSub, 15)
+                        .andThen(new PivotMoveToPosition(pivotSub, 60))));
     // manip.b().onTrue(new PivotMoveToPosition(pivotSub, 0));
     // manip.a().onTrue(new PivotMoveToPosition(pivotSub, -10));
     // manip

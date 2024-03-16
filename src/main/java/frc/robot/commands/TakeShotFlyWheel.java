@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LightConstants;
+import frc.robot.subsystems.BlinkinSub;
 import frc.robot.subsystems.ShooterIntakeSubsystem;
 import frc.robot.subsystems.flywheel.Flywheel;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -18,16 +20,22 @@ public class TakeShotFlyWheel extends Command {
   private int waitCount;
   private double m_RPM;
   private boolean m_shootEngaged;
+  private BlinkinSub m_TowerBlinkin;
   private final double M_ERROR = 10; // in rpm
   private final LoggedDashboardNumber flywheelSpeedInput =
       new LoggedDashboardNumber("Flywheel Speed", 6000.0);
   private int m_timeOutCounter;
 
   public TakeShotFlyWheel(
-      ShooterIntakeSubsystem shooterintakesubs, Flywheel flywheel, double RPM, int timeOutSeconds) {
+      ShooterIntakeSubsystem shooterintakesubs,
+      Flywheel flywheel,
+      double RPM,
+      int timeOutSeconds,
+      BlinkinSub TowerBlinkin) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_ShooterIntakeSubsystem = shooterintakesubs;
     m_Flywheel = flywheel;
+    m_TowerBlinkin = TowerBlinkin;
     waitCount = 0;
     if (RPM > 6700) { // safety so motor doesn't overload
       RPM = 6700;
@@ -38,6 +46,7 @@ public class TakeShotFlyWheel extends Command {
     m_timeOut20Ms = timeOutSeconds / 0.02; // converts seconds to number of 20ms ticks
 
     addRequirements(m_ShooterIntakeSubsystem, m_Flywheel);
+    addRequirements(m_TowerBlinkin);
   }
 
   // Called when the command is initially scheduled.
@@ -80,8 +89,8 @@ public class TakeShotFlyWheel extends Command {
   public boolean isFinished() { // TODO: ADD LED HEADS UP FOR WHEN SHOT FAILS DUE TO LOW RPM
     if ((waitCount > 20) || (m_timeOutCounter >= m_timeOut20Ms)) { // 15 is perfect!!!
 
-      // m_Flywheel.runVolts(0);
-      // m_ShooterIntakeSubsystem.MoveShooterIntake(0);
+      m_TowerBlinkin.setColor(LightConstants.kBreathBlue);
+
       return true;
     }
     return false;

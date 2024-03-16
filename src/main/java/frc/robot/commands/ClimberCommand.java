@@ -15,7 +15,7 @@ public class ClimberCommand extends Command {
 
     return Commands.run(
         () -> {
-          climberSub.moveClimbers(ySupplier.getAsDouble()); // the divide by 4 for testing
+          climberSub.moveBothClimbers(ySupplier.getAsDouble()); // the divide by 4 for testing
         },
         climberSub);
   }

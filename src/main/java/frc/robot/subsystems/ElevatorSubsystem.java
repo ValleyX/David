@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
@@ -39,6 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_ElevatorPIDController.setFeedbackDevice(
         m_ElevatorEncoder); // setting the encoder to feed back into the motor to make the motor
     m_ElevatorEncoder.setPosition(0);
+    m_ElevatorMotor.setIdleMode(IdleMode.kBrake);
 
     m_ElevatorUpperLimit =
         m_ElevatorMotor.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);

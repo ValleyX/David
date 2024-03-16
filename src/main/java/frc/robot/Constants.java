@@ -92,6 +92,7 @@ public final class Constants {
     // color options!***********
     public static final double kViolet = 0.91;
     public static final double kGold = 0.67;
+    public static final double kGreen = 0.77;
     public static final double kStrobeRed = -0.11;
     public static final double kBreathBlue = -0.15;
     public static final double kStrobeGold = -0.07; // indicating cone
@@ -275,7 +276,7 @@ public final class Constants {
     public static final double gearReduction = 100; // mat calculation
     public static final double gearDiameterIn = 1.25;
     public static final double RotationsPerDegree = // .2328;
-        (gearReduction) / (gearDiameterIn * Math.PI);
+        (gearReduction) / (/*gearDiameterIn * Math.PI*/ 360);
 
     // Climber Pivot PID
     public static final double kP = 0.5; // TODO have to tune Climber PID

@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.BlinkinLEDController;
+import frc.robot.Constants.LightConstants;
+import frc.robot.subsystems.BlinkinSub;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterIntakeSubsystem;
@@ -15,23 +17,31 @@ public class FloorIntakeCommand extends Command {
   private IntakeSubsystem m_IntakeSubsystem;
   private ShooterIntakeSubsystem m_ShooterIntakeSubsystem;
   private PivotSubsystem m_PivotSubsystem;
+  private BlinkinSub m_BlinkinSub;
   // private Joystick m_joystickManipulator;
   private int wait = 0;
 
-  private PWM m_TowerBlinkin;
-  private PWM m_BaseBlinkin;
+  private BlinkinSub m_TowerBlinkin;
+  private BlinkinSub m_BaseBlinkin;
 
   public FloorIntakeCommand(
-      IntakeSubsystem intakesub, ShooterIntakeSubsystem shootersub, PivotSubsystem PivotSub) {
+      IntakeSubsystem intakesub,
+      ShooterIntakeSubsystem shootersub,
+      PivotSubsystem PivotSub,
+      BlinkinSub TowerBlinkin,
+      BlinkinSub BaseBlinkin) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_IntakeSubsystem = intakesub;
     m_ShooterIntakeSubsystem = shootersub;
     m_PivotSubsystem = PivotSub;
+    m_TowerBlinkin = TowerBlinkin;
+    m_BaseBlinkin = BaseBlinkin;
     // m_joystickManipulator = manipulate;
     addRequirements(m_IntakeSubsystem);
     addRequirements(m_ShooterIntakeSubsystem);
     addRequirements(m_PivotSubsystem);
-
+    addRequirements(m_TowerBlinkin);
+    addRequirements(m_BaseBlinkin);
     // m_TowerBlinkin = new PWM(PWMIDs.kPWM_TowerBlinkin);
     // m_BaseBlinkin = new PWM(PWMIDs.kPWM_BaseBlinkin);
   }
@@ -47,7 +57,12 @@ public class FloorIntakeCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (!m_IntakeSubsystem.getFloorBeans()) {
+      // m_TowerBlinkin.setColor(LightConstants.kGold);
+      m_TowerBlinkin.setColor(BlinkinLEDController.BlinkinPattern.GOLD.value);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -63,16 +78,10 @@ public class FloorIntakeCommand extends Command {
     if (!m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
 
       // sets LEDs to gold when there is a ring in the thing
-      // new BlinkinControl(m_BaseBlinkin, LightConstants.kGold);
-      // new BlinkinControl(m_TowerBlinkin, LightConstants.kGold);
+      m_TowerBlinkin.setColor(LightConstants.kGreen);
 
       return true;
     }
-
-    // sets LEDs to gold when there is a ring in the thing
-    // new BlinkinControl(m_BaseBlinkin, LightConstants.kBreathBlue);
-    // new BlinkinControl(m_TowerBlinkin, LightConstants.kBreathBlue);
-
     return false;
   }
 }
