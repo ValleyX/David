@@ -165,7 +165,7 @@ public class ModuleIOSparkFlexFx implements ModuleIO {
 
     // driveTalonFX.burnFlash();
     turnSparkMax.burnFlash();
-    // setDriveBrakeMode(true);
+    setDriveBrakeMode(true);
     BaseStatusSignal.setUpdateFrequencyForAll(
         100.0, drivePosition); // Required for odometry, use faster rate
     BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent);
@@ -239,8 +239,12 @@ public class ModuleIOSparkFlexFx implements ModuleIO {
 
   @Override
   public void setDriveBrakeMode(boolean enable) {
+
     var config = new MotorOutputConfigs();
-    config.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.Inverted =
+        isDriverMotorInverted
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     config.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     driveTalonFX.getConfigurator().apply(config);
   }

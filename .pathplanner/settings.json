@@ -3,9 +3,11 @@
   "robotLength": 0.81,
   "holonomicMode": true,
   "pathFolders": [
+    "Blue1 2 Ring",
     "Blue1Auto",
     "BlueAutoGoFar",
-    "Blue1 2 Ring"
+    "Blue2 1Ring",
+    "blue 3 get out"
   ],
   "autoFolders": [],
   "defaultMaxVel": 2.0,

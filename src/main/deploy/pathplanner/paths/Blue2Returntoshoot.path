@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7233010829658023,
-        "y": 6.623409610455584
+        "x": 3.3446786893573788,
+        "y": 5.541275082550166
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3110120765696076,
-        "y": 7.22044934998961
+        "x": 3.22340499226453,
+        "y": 5.522617590689727
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.176761262613434,
-        "y": 7.0058881935945685
+        "x": 1.3016833306393887,
+        "y": 5.541275082550166
       },
       "prevControl": {
-        "x": 2.176761262613434,
-        "y": 7.0058881935945685
+        "x": 1.4229570277322372,
+        "y": 5.559932574410603
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "StartPickupFinish"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.7,
-      "rotationDegrees": 180.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.69804732742114,
-    "rotateFast": true
+    "rotation": 0,
+    "rotateFast": false
   },
   "reversed": false,
-  "folder": "Blue1 2 Ring",
+  "folder": "Blue2 1Ring",
   "previewStartingState": {
-    "rotation": -117.97947438848016,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

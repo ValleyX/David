@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7233010829658023,
-        "y": 6.623409610455584
+        "x": 0.7606160666875654,
+        "y": 4.487126792439293
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3110120765696076,
-        "y": 7.22044934998961
+        "x": 0.46209619692055315,
+        "y": 2.649363844186124
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.176761262613434,
-        "y": 7.0058881935945685
+        "x": 4.035005888193594,
+        "y": 0.5503960098829296
       },
       "prevControl": {
-        "x": 2.176761262613434,
-        "y": 7.0058881935945685
+        "x": 1.2457108550589604,
+        "y": 1.1381070034906244
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "StartPickupFinish"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3,
+      "rotationDegrees": -179.7519973664686,
+      "rotateFast": true
+    },
     {
       "waypointRelativePos": 0.7,
       "rotationDegrees": 180.0,
@@ -45,13 +50,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.69804732742114,
+    "rotation": 180.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Blue1 2 Ring",
+  "folder": "blue 3 get out",
   "previewStartingState": {
-    "rotation": -117.97947438848016,
+    "rotation": 120.96375653207359,
     "velocity": 0
   },
   "useDefaultConstraints": true

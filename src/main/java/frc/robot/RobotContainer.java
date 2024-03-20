@@ -92,9 +92,9 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOSparkMax(3),
-                new ModuleIOSparkMax(2),
-                new ModuleIOSparkMax(1),
+                new ModuleIOSparkFlexFx(3),
+                new ModuleIOSparkFlexFx(2),
+                new ModuleIOSparkFlexFx(1),
                 new ModuleIOSparkFlexFx(0)
                 // new ModuleIOSparkMax(0)
                 );
@@ -162,7 +162,7 @@ public class RobotContainer {
     }
 
     // Set up auto routines
-    NamedCommands.registerCommand("Run Flywheel", new flywheelRev(flywheel, true, 3500));
+    NamedCommands.registerCommand("Run Flywheel", new flywheelRev(flywheel, true, 4500));
 
     NamedCommands.registerCommand("stop", Commands.runOnce(drive::stopWithX, drive));
 
@@ -259,7 +259,7 @@ public class RobotContainer {
     manip
         .leftTrigger()
         .onTrue(
-            new PivotMoveToPosition(pivotSub, 60)
+            new PivotMoveToPosition(pivotSub, 61)
                 .andThen(
                     new FloorIntakeCommand(
                         intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
@@ -268,7 +268,7 @@ public class RobotContainer {
     manip
         .rightTrigger()
         .whileTrue(
-            new PivotMoveToPosition(pivotSub, 60)
+            new PivotMoveToPosition(pivotSub, 61)
                 .andThen(new OutTake(intakeSub, shooterIntakeSub, pivotSub)));
 
     // shooter: speaker shot
@@ -320,7 +320,7 @@ public class RobotContainer {
                         intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
 
     // flywheel: rev
-    manip.rightBumper().whileTrue(new flywheelRevUp(flywheel, true, 3500));
+    manip.rightBumper().onTrue(new flywheelRevUp(flywheel, true, 3500));
 
     // flywheel: cancel rev
     manip.leftBumper().onTrue(new flywheelRev(flywheel, false, 0));

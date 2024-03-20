@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7606160666875654,
+      "y": 4.487126792439293
+    },
+    "rotation": 119.40718906099457
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Subwoofer Auto Shot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "get out"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
