@@ -168,12 +168,12 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "NonCentered Auto Shot",
-        new PivotMoveToPosition(pivotSub, 45)
+        new PivotMoveToPosition(pivotSub, 50)
             .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5800.0, 6, m_TowerBlinkin)));
 
     NamedCommands.registerCommand(
         "Subwoofer Auto Shot",
-        new PivotMoveToPosition(pivotSub, 60)
+        new PivotMoveToPosition(pivotSub, 59)
             .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6, m_TowerBlinkin)));
 
     NamedCommands.registerCommand(
@@ -181,7 +181,8 @@ public class RobotContainer {
         new PivotMoveToPosition(pivotSub, 60)
             .andThen(
                 new FloorIntakeCommand(
-                    intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
+                        intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)
+                    .withTimeout(3.5)));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // autoChooser.addOption("test", elevatorSub.getDefaultCommand());

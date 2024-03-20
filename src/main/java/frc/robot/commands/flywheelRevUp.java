@@ -12,14 +12,17 @@ public class flywheelRevUp extends Command {
   private Flywheel m_flywheel;
 
   private boolean m_enable;
-  private int m_targetRPM;
+  private double m_targetRPM;
 
   public flywheelRevUp(Flywheel flywheel, boolean enable, int targetRPM) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_flywheel = flywheel;
     m_enable = enable;
-    m_targetRPM = targetRPM;
+    // m_targetRPM = targetRPM;
+    double targetDouble = targetRPM;
+
+    m_targetRPM = targetDouble / 6000.0;
 
     addRequirements(flywheel);
   }
@@ -40,7 +43,8 @@ public class flywheelRevUp extends Command {
   @Override
   public boolean isFinished() {
 
-    m_flywheel.runVelocity(m_targetRPM);
+    // m_flywheel.runVelocity(m_targetRPM);
+    m_flywheel.runVolts(m_targetRPM);
 
     return false;
   }
