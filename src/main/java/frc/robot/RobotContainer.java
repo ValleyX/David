@@ -283,7 +283,7 @@ public class RobotContainer {
         .onTrue(
             new PivotMoveToPosition(pivotSub, 58)
                 .andThen(
-                    new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6, m_TowerBlinkin)));
+                    new TakeShotFlyWheel(shooterIntakeSub, flywheel, 4000.0, 6, m_TowerBlinkin)));
     // 3500
 
     // shooter: amp shot
