@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.46209619692055315,
-        "y": 2.649363844186124
+        "x": 1.9453667998245088,
+        "y": 2.425473941856975
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.035005888193594,
-        "y": 0.5503960098829296
+        "x": 4.128293347495786,
+        "y": 2.8825824924377126
       },
       "prevControl": {
-        "x": 1.2457108550589604,
-        "y": 1.1381070034906244
+        "x": 2.9528713602881758,
+        "y": 3.0504999191816586
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,13 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3,
-      "rotationDegrees": -179.7519973664686,
-      "rotateFast": true
-    },
-    {
-      "waypointRelativePos": 0.7,
-      "rotationDegrees": 180.0,
+      "waypointRelativePos": 0.25,
+      "rotationDegrees": -178.8724917293678,
       "rotateFast": true
     }
   ],
@@ -51,7 +46,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 180.0,
-    "rotateFast": true
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "blue 3 get out",

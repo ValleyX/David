@@ -46,6 +46,10 @@ public class IntakeSubsystem extends SubsystemBase {
     return m_floorBeans.get();
   }
 
+  public boolean isFloorIntakeOn() {
+    return Math.abs(m_floorIntakeMotor.getMotorOutputPercent()) > 0.1;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("floor Beam Break", m_floorBeans.get());

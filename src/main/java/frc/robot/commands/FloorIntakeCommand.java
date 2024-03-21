@@ -52,6 +52,10 @@ public class FloorIntakeCommand extends Command {
 
     m_IntakeSubsystem.in();
     m_ShooterIntakeSubsystem.MoveShooterIntake(.3);
+    if (m_IntakeSubsystem.getFloorBeans() && m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
+      m_TowerBlinkin.setColor(BlinkinLEDController.BlinkinPattern.VIOLET.value);
+    }
+
     wait = 0;
   }
 
@@ -61,6 +65,9 @@ public class FloorIntakeCommand extends Command {
     if (!m_IntakeSubsystem.getFloorBeans()) {
       // m_TowerBlinkin.setColor(LightConstants.kGold);
       m_TowerBlinkin.setColor(BlinkinLEDController.BlinkinPattern.GOLD.value);
+    }
+    if (m_IntakeSubsystem.getFloorBeans() && m_ShooterIntakeSubsystem.IsNoteRecievedBool()) {
+      m_TowerBlinkin.setColor(BlinkinLEDController.BlinkinPattern.VIOLET.value);
     }
   }
 

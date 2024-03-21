@@ -174,7 +174,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Subwoofer Auto Shot",
         new PivotMoveToPosition(pivotSub, 59)
-            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6, m_TowerBlinkin)));
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 4000.0, 6, m_TowerBlinkin)));
+
+    NamedCommands.registerCommand(
+        "Subwoofer Auto Shot Back a Little",
+        new PivotMoveToPosition(pivotSub, 57)
+            .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 4000.0, 6, m_TowerBlinkin)));
 
     NamedCommands.registerCommand(
         "Activate Intake",
@@ -279,6 +284,7 @@ public class RobotContainer {
             new PivotMoveToPosition(pivotSub, 58)
                 .andThen(
                     new TakeShotFlyWheel(shooterIntakeSub, flywheel, 3500.0, 6, m_TowerBlinkin)));
+    // 3500
 
     // shooter: amp shot
     manip
@@ -295,8 +301,8 @@ public class RobotContainer {
     manip
         .y()
         .onTrue(
-            new PivotMoveToPosition(pivotSub, 40)
-                .alongWith(new ElevatorMoveToPosition(elevatorSub, 15))
+            new PivotMoveToPosition(pivotSub, 35)
+                .andThen(new ElevatorMoveToPosition(elevatorSub, 15))
                 .alongWith(new flywheelRev(flywheel, true, 5000))
                 .andThen(new TakeShotFlyWheel(shooterIntakeSub, flywheel, 5000, 6, m_TowerBlinkin))
                 .andThen(new ElevatorMoveToPosition(elevatorSub, 0))
@@ -321,7 +327,8 @@ public class RobotContainer {
                         intakeSub, shooterIntakeSub, pivotSub, m_TowerBlinkin, m_BaseBlinkin)));
 
     // flywheel: rev
-    manip.rightBumper().onTrue(new flywheelRevUp(flywheel, true, 3500));
+    manip.rightBumper().onTrue(new flywheelRevUp(flywheel, true, 5500));
+    // 3500
 
     // flywheel: cancel rev
     manip.leftBumper().onTrue(new flywheelRev(flywheel, false, 0));
@@ -385,5 +392,10 @@ public class RobotContainer {
   public void teleopCounter() {
     counter++;
     SmartDashboard.putNumber("TeleOp Counter: ", counter);
+    if (shooterIntakeSub.IsNoteRecievedBool()
+        && intakeSub.getFloorBeans()
+        && !intakeSub.isFloorIntakeOn()) {
+      m_TowerBlinkin.setColor(LightConstants.kBreathBlue);
+    }
   }
 }

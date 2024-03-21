@@ -19,6 +19,7 @@ public class TakeShotFlyWheel extends Command {
   private double m_timeOut20Ms;
   private int waitCount;
   private double m_RPM;
+  private double m_Veloscity;
   private boolean m_shootEngaged;
   private BlinkinSub m_TowerBlinkin;
   private final double M_ERROR = 10; // in rpm
@@ -37,10 +38,18 @@ public class TakeShotFlyWheel extends Command {
     m_Flywheel = flywheel;
     m_TowerBlinkin = TowerBlinkin;
     waitCount = 0;
+    /*
     if (RPM > 6700) { // safety so motor doesn't overload
       RPM = 6700;
     }
-    m_RPM = RPM;
+    */
+
+    m_Veloscity = RPM;
+    double targetDouble = RPM;
+
+    m_RPM = targetDouble / 6000.0;
+
+    // m_RPM = RPM;
     m_shootEngaged = false;
 
     m_timeOut20Ms = timeOutSeconds / 0.02; // converts seconds to number of 20ms ticks
@@ -56,7 +65,8 @@ public class TakeShotFlyWheel extends Command {
     waitCount = 0;
     // m_Flywheel.runVelocity(flywheelSpeedInput.get());
     // m_Flywheel.runVolts(0.9);
-    m_Flywheel.runVelocity(m_RPM);
+    // m_Flywheel.runVelocity(m_RPM);
+    m_Flywheel.runVolts(m_RPM);
     m_shootEngaged = false;
     m_timeOutCounter = 0;
   }
@@ -67,7 +77,7 @@ public class TakeShotFlyWheel extends Command {
 
     m_timeOutCounter++; // adds 1 to this every 20ms in this loop
 
-    if (m_Flywheel.getVelocityRPM() > m_RPM) {
+    if (m_Flywheel.getVelocityRPM() > m_Veloscity) {
       m_ShooterIntakeSubsystem.MoveShooterIntake(1);
       m_shootEngaged = true;
     }

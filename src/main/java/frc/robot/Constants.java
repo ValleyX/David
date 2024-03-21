@@ -235,7 +235,7 @@ public final class Constants {
         (countsPerMotorREV * gearReduction) / (gearDiameterIn * Math.PI);
 
     // Elevator PID
-    public static final double kP = 1; // TODO have to tune Elevator PID
+    public static final double kP = 0.75; // TODO have to tune Elevator PID
     public static final double kI = 0; // .0001
     public static final double kD = 0; // 1
     public static final double kIz = 0;

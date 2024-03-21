@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 1.3016833306393887,
-        "y": 5.531946336619947
+        "y": 5.541275082550166
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.30168333063938624,
-        "y": 5.531946336619947
+        "x": 2.206571685870644,
+        "y": 5.989054887200684
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Blue2 at Speak"
     },
     {
       "anchor": {
-        "x": 3.1581037707529958,
-        "y": 5.531946336619947
+        "x": 6.814972175398896,
+        "y": 3.992703258133789
       },
       "prevControl": {
-        "x": 4.158103770752996,
-        "y": 5.531946336619947
+        "x": 5.760823885284134,
+        "y": 4.113976955226638
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.39049342332476,
+    "rotation": -179.44909602078138,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Blue2 1Ring",
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": -179.37040139158967,
     "velocity": 0
   },
   "useDefaultConstraints": true
